@@ -222,11 +222,17 @@ export default function Home() {
       {!started && (
         <div className="overlay">
           <div className="welcome-card">
+            <div className="welcome-confetti" aria-hidden="true">
+              <span>★</span><span>●</span><span>✦</span><span>▲</span><span>★</span>
+            </div>
             <div className="welcome-mascot">🦊</div>
-            <p className="eyebrow">50 colourful challenges</p>
-            <h2>Ready for a<br /><span>Math Adventure?</span></h2>
+            <p className="eyebrow">A special adventure for</p>
+            <h2 className="child-greeting" aria-label="Hi Hridhaan!">
+              <small>Hi</small>{[..."Hridhaan!"].map((letter, index) => <span key={index}>{letter}</span>)}
+            </h2>
+            <h3>Ready for a Math Adventure?</h3>
             <p>Find the right answers, earn stars and unlock every level.</p>
-            <button onClick={begin}>Let’s play! <span>🚀</span></button>
+            <button onClick={begin}>Let’s play, Hridhaan! <span>🚀</span></button>
           </div>
         </div>
       )}
