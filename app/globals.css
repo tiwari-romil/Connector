@@ -38,3 +38,17 @@ button { font: inherit; }
 @media (max-width: 720px) { .game-shell { padding: 15px 12px 28px; }.brand span:last-child { display:none; }.level-strip { grid-template-columns: 1fr auto; gap: 8px 12px; }.progress-track { grid-row: 2; grid-column: 1 / 3; }.play-card { min-height: 560px; padding: 22px 12px 20px; border-radius: 28px; }.mascot { font-size: 58px; left: -9px; top: 125px; }.equation-bubble { min-width: 270px; padding: 12px 20px; }.answer { height: 115px; }.answer span { width: 72px; height: 80px; font-size: 28px; }.answers { gap: 2px; }.connection-zone { height: 255px; }.level-grid { grid-template-columns: repeat(5,1fr); }.feedback.correct strong { font-size: 17px; }.feedback button { padding: 11px 12px; }.stat { padding: 5px 9px; }.welcome-card { padding: 30px 24px; } }
 @media (max-height: 720px) and (min-width: 721px) { .game-shell { padding-top: 12px; }.level-strip { margin: 10px auto; }.play-card { min-height: 510px; padding-top: 15px; }.connection-zone { height: 220px; }.answer { height: 105px; }.answer span { width: 80px; height: 82px; }.map-button { margin-top: 9px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
+
+.subject-switch { display: flex; padding: 4px; gap: 3px; border-radius: 16px; background: rgba(255,255,255,.68); box-shadow: 0 5px 0 rgba(74,57,145,.08); }
+.subject-switch button { border: 0; border-radius: 12px; padding: 9px 13px; color: #6c6580; background: transparent; font-size: 14px; font-weight: 1000; cursor: pointer; transition: background .2s ease, color .2s ease, transform .2s ease; }
+.subject-switch button.active { color: white; background: #7351f1; box-shadow: 0 3px 0 #4c33b5; }
+.subject-switch button:not(.active):hover { background: #f0ebff; transform: translateY(-1px); }
+.science-theme .brand-mark { background: #2996c7; box-shadow: 0 7px 0 #1776a1; }
+.science-theme .progress-track span { background: linear-gradient(90deg,#249aca,#54cdb5); }
+.science-theme .science-prompt { width: min(620px,94%); min-width: 0; min-height: 96px; padding: 18px 28px; font-size: clamp(24px,4vw,37px); line-height: 1.12; letter-spacing: -.8px; background: linear-gradient(145deg,#2c9ecb,#247db5); box-shadow: 0 9px 0 #17628e, 0 18px 28px rgba(35,113,165,.24); }
+.science-card .answer span { width: min(150px,95%); height: 105px; padding: 10px; font-size: clamp(13px,1.8vw,18px); line-height: 1.05; letter-spacing: -.3px; text-shadow: 0 1px 0 rgba(0,0,0,.12); }
+.science-card .answer { height: 132px; }
+.welcome-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.welcome-choices button { border: 0; border-radius: 16px; padding: 15px 11px; color: white; background: #7351f1; box-shadow: 0 6px 0 #4c33b5; cursor: pointer; font-size: 17px; font-weight: 1000; }
+.welcome-choices .science-start { background: #279cc8; box-shadow: 0 6px 0 #176c91; }
+@media (max-width: 720px) { .topbar { gap: 8px; }.subject-switch { position: absolute; top: 57px; left: 50%; transform: translateX(-50%); white-space: nowrap; }.level-strip { margin-top: 64px; }.subject-switch button { padding: 7px 10px; font-size: 12px; }.science-theme .science-prompt { min-height: 102px; padding: 16px 18px; font-size: 23px; }.science-card .answer span { width: 90%; height: 90px; padding: 6px; font-size: 12px; }.science-card .answer { height: 115px; }.welcome-choices { grid-template-columns: 1fr; gap: 10px; }.welcome-choices button { padding: 13px; } }
