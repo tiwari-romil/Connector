@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Difficulty = "Easy" | "Medium" | "Tricky";
-type Subject = "math" | "science";
+type Subject = "math" | "science" | "logic";
 type MathLevel = { a: number; b: number; difficulty: Difficulty };
 type ScienceLevel = { prompt: string; answer: string; distractors: string[]; difficulty: Difficulty };
+type LogicLevel = ScienceLevel & { category: "Odd One Out" | "What Comes Next?" };
 type Progress = { levelIndex: number; unlocked: number; stars: number };
 type AdventureProgress = Record<Subject, Progress>;
 
@@ -73,11 +74,68 @@ const SCIENCE_LEVELS: ScienceLevel[] = [
   difficulty: index < 18 ? "Easy" : index < 35 ? "Medium" : "Tricky",
 }));
 
+const LOGIC_LEVELS: LogicLevel[] = [
+  ["Odd One Out", "Which one is different?", "🐶", "🐱", "🐭", "🍎"],
+  ["Odd One Out", "Which one is different?", "🍌", "🍎", "🍇", "🚗"],
+  ["Odd One Out", "Which one is different?", "🚗", "🚌", "🚲", "🐟"],
+  ["Odd One Out", "Which one is different?", "🌞", "⭐", "🌙", "🧸"],
+  ["Odd One Out", "Which one is different?", "⚽", "🏀", "🎾", "🍪"],
+  ["Odd One Out", "Which one is different?", "👟", "🧦", "👢", "🐸"],
+  ["Odd One Out", "Which one is different?", "🐸", "🐰", "🦘", "🚂"],
+  ["Odd One Out", "Which one is different?", "🍓", "🍒", "🍅", "🛏️"],
+  ["Odd One Out", "Which one is different?", "🦁", "🐯", "🐻", "🌳"],
+  ["Odd One Out", "Which one is different?", "✏️", "🖍️", "🖊️", "🥪"],
+  ["Odd One Out", "Which one is different?", "🐠", "🐬", "🐳", "🌼"],
+  ["Odd One Out", "Which one is different?", "🪥", "🧼", "🛁", "🚀"],
+  ["Odd One Out", "Which one is different?", "🥕", "🥦", "🌽", "🎈"],
+  ["Odd One Out", "Which one is different?", "👒", "🧢", "🎩", "🍕"],
+  ["Odd One Out", "Which one is different?", "🐔", "🦆", "🐦", "🚁"],
+  ["Odd One Out", "Which one is different?", "🌧️", "❄️", "🌈", "🛴"],
+  ["Odd One Out", "Which one is different?", "🛏️", "🪑", "🛋️", "🍭"],
+  ["Odd One Out", "Which one is different?", "🥛", "🧃", "💧", "🧱"],
+  ["Odd One Out", "Which one is different?", "🖐️", "👂", "👃", "🪁"],
+  ["Odd One Out", "Which one is different?", "🚒", "🚑", "🚓", "🦋"],
+  ["Odd One Out", "Which one is different?", "🐌", "🐛", "🐜", "🎸"],
+  ["Odd One Out", "Which one is different?", "☕", "🥣", "🍽️", "⚽"],
+  ["Odd One Out", "Which one is different?", "🏠", "🏫", "🏥", "🍉"],
+  ["Odd One Out", "Which one is different?", "🖼️", "📚", "🧩", "🐘"],
+  ["Odd One Out", "Which one is different?", "🌲", "🌻", "🌷", "🚤"],
+  ["What Comes Next?", "What comes next?  🔴  🔵  🔴  🔵  ?", "🔴", "🔵", "🟢", "🟡"],
+  ["What Comes Next?", "What comes next?  🐶  🐱  🐶  🐱  ?", "🐶", "🐱", "🐭", "🐰"],
+  ["What Comes Next?", "What comes next?  1  2  3  ?", "4", "2", "5", "1"],
+  ["What Comes Next?", "What comes next?  🌞  🌙  🌞  🌙  ?", "🌞", "🌙", "⭐", "☁️"],
+  ["What Comes Next?", "What comes next?  🍎  🍌  🍎  🍌  ?", "🍎", "🍌", "🍇", "🍓"],
+  ["What Comes Next?", "What comes next?  2  4  6  ?", "8", "7", "5", "10"],
+  ["What Comes Next?", "What comes next?  🟥  🟨  🟥  🟨  ?", "🟥", "🟨", "🟦", "🟩"],
+  ["What Comes Next?", "What comes next?  🐸  🐸  🐰  🐸  🐸  ?", "🐰", "🐸", "🐶", "🐱"],
+  ["What Comes Next?", "What comes next?  5  4  3  ?", "2", "1", "4", "6"],
+  ["What Comes Next?", "What comes next?  ⭐  ❤️  ⭐  ❤️  ?", "⭐", "❤️", "🌙", "🌈"],
+  ["What Comes Next?", "What comes next?  🚌  🚗  🚌  🚗  ?", "🚌", "🚗", "🚲", "🚂"],
+  ["What Comes Next?", "What comes next?  1  3  5  ?", "7", "6", "4", "8"],
+  ["What Comes Next?", "What comes next?  🟢  🟢  🟡  🟢  🟢  ?", "🟡", "🟢", "🔵", "🔴"],
+  ["What Comes Next?", "What comes next?  🐟  🐟  🦀  🐟  🐟  ?", "🦀", "🐟", "🐙", "🐬"],
+  ["What Comes Next?", "What comes next?  10  9  8  ?", "7", "6", "9", "5"],
+  ["What Comes Next?", "What comes next?  🍓  🍒  🍓  🍒  ?", "🍓", "🍒", "🍇", "🍌"],
+  ["What Comes Next?", "What comes next?  ▲  ●  ▲  ●  ?", "▲", "●", "■", "★"],
+  ["What Comes Next?", "What comes next?  🧦  👟  🧦  👟  ?", "🧦", "👟", "👢", "🧤"],
+  ["What Comes Next?", "What comes next?  3  6  9  ?", "12", "10", "11", "8"],
+  ["What Comes Next?", "What comes next?  🌧️  ☀️  🌧️  ☀️  ?", "🌧️", "☀️", "🌈", "❄️"],
+  ["What Comes Next?", "What comes next?  🐝  🦋  🐝  🦋  ?", "🐝", "🦋", "🐞", "🐛"],
+  ["What Comes Next?", "What comes next?  4  5  6  ?", "7", "8", "5", "3"],
+  ["What Comes Next?", "What comes next?  🔺  🔺  🔵  🔺  🔺  ?", "🔵", "🔺", "🟨", "🟩"],
+  ["What Comes Next?", "What comes next?  🥕  🥦  🥕  🥦  ?", "🥕", "🥦", "🌽", "🍅"],
+  ["What Comes Next?", "What comes next?  7  8  9  ?", "10", "11", "8", "6"],
+].map(([category, prompt, answer, ...distractors], index) => ({
+  category: category as LogicLevel["category"], prompt, answer, distractors,
+  difficulty: index < 18 ? "Easy" : index < 35 ? "Medium" : "Tricky",
+}));
+
 const COLORS = ["coral", "sky", "sun", "mint"];
 const MASCOTS = ["🦊", "🐼", "🦁", "🐸", "🐨"];
 const INITIAL_PROGRESS: AdventureProgress = {
   math: { levelIndex: 0, unlocked: 1, stars: 0 },
   science: { levelIndex: 0, unlocked: 1, stars: 0 },
+  logic: { levelIndex: 0, unlocked: 1, stars: 0 },
 };
 
 function mathChoicesFor(level: MathLevel, index: number) {
@@ -106,16 +164,17 @@ export default function Home() {
   const audioRef = useRef<AudioContext | null>(null);
   const musicTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const levels = subject === "math" ? MATH_LEVELS : SCIENCE_LEVELS;
+  const levels = subject === "math" ? MATH_LEVELS : subject === "science" ? SCIENCE_LEVELS : LOGIC_LEVELS;
   const current = progress[subject];
   const level = levels[current.levelIndex];
   const isMath = subject === "math";
+  const isLogic = subject === "logic";
   const answer = isMath ? String((level as MathLevel).a + (level as MathLevel).b) : (level as ScienceLevel).answer;
   const choices = useMemo(() => isMath
     ? mathChoicesFor(level as MathLevel, current.levelIndex)
     : scienceChoicesFor(level as ScienceLevel, current.levelIndex), [isMath, level, current.levelIndex]);
   const praise = current.levelIndex % 2 === 0 ? "Wow!" : "Awesome!";
-  const totalStars = progress.math.stars + progress.science.stars;
+  const totalStars = progress.math.stars + progress.science.stars + progress.logic.stars;
 
   useEffect(() => {
     const saved = localStorage.getItem("learning-adventure-progress");
@@ -126,6 +185,7 @@ export default function Home() {
         setProgress({
           math: { levelIndex: Math.min(49, Math.max(0, data.math?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.math?.unlocked || 1)), stars: Math.max(0, data.math?.stars || 0) },
           science: { levelIndex: Math.min(49, Math.max(0, data.science?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.science?.unlocked || 1)), stars: Math.max(0, data.science?.stars || 0) },
+          logic: { levelIndex: Math.min(49, Math.max(0, data.logic?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.logic?.unlocked || 1)), stars: Math.max(0, data.logic?.stars || 0) },
         });
       } else if (oldMath) {
         const data = JSON.parse(oldMath);
@@ -199,21 +259,21 @@ export default function Home() {
     <main className={`game-shell ${subject}-theme`}>
       <div className="cloud cloud-one" aria-hidden="true">☁</div><div className="cloud cloud-two" aria-hidden="true">☁</div><div className="sparkles" aria-hidden="true">✦　·　✦　·　✦</div>
       <header className="topbar">
-        <button className="brand" onClick={() => setShowMap(true)} aria-label="Open level map"><span className="brand-mark">{isMath ? "➕" : "🔬"}</span><span>Learning Adventure</span></button>
-        <div className="subject-switch" aria-label="Choose a learning game"><button className={isMath ? "active" : ""} onClick={() => switchSubject("math")}>➕ Maths</button><button className={!isMath ? "active" : ""} onClick={() => switchSubject("science")}>🔬 Science</button></div>
+        <button className="brand" onClick={() => setShowMap(true)} aria-label="Open level map"><span className="brand-mark">{isMath ? "➕" : isLogic ? "🧩" : "🔬"}</span><span>Learning Adventure</span></button>
+        <div className="subject-switch" aria-label="Choose a learning game"><button className={isMath ? "active" : ""} onClick={() => switchSubject("math")}>➕ Maths</button><button className={subject === "science" ? "active" : ""} onClick={() => switchSubject("science")}>🔬 Science</button><button className={isLogic ? "active" : ""} onClick={() => switchSubject("logic")}>🧩 Logic</button></div>
         <div className="stats"><div className="stat"><span>⭐</span><strong>{totalStars}</strong></div><div className="stat"><span>🔥</span><strong>{streak}</strong></div><button className="sound-button" onClick={toggleMusic} aria-label={musicOn ? "Turn music off" : "Turn music on"}>{musicOn ? "🔊" : "🔇"}</button></div>
       </header>
-      <section className="level-strip" aria-label="Level progress"><div className="level-copy"><span className={`difficulty ${level.difficulty.toLowerCase()}`}>{level.difficulty}</span><h1>{isMath ? "Maths" : "Science"} · Level {current.levelIndex + 1}</h1></div><div className="progress-track"><span style={{ width: `${((current.levelIndex + 1) / 50) * 100}%` }} /></div><span className="progress-count">{current.levelIndex + 1} / 50</span></section>
-      <section className={`play-card ${status} ${isMath ? "math-card" : "science-card"}`} aria-live="polite">
+      <section className="level-strip" aria-label="Level progress"><div className="level-copy"><span className={`difficulty ${level.difficulty.toLowerCase()}`}>{level.difficulty}</span><h1>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} · Level {current.levelIndex + 1}</h1></div><div className="progress-track"><span style={{ width: `${((current.levelIndex + 1) / 50) * 100}%` }} /></div><span className="progress-count">{current.levelIndex + 1} / 50</span></section>
+      <section className={`play-card ${status} ${isMath ? "math-card" : isLogic ? "logic-card" : "science-card"}`} aria-live="polite">
         <div className="mascot" aria-hidden="true">{MASCOTS[Math.floor(current.levelIndex / 10)]}</div>
-        <p className="instruction">{isMath ? "Connect the sum to the right answer!" : "Match the science question to the right answer!"}</p>
-        {isMath ? <div className="equation-bubble"><span>{(level as MathLevel).a}</span><b>+</b><span>{(level as MathLevel).b}</span><b>=</b><span className="question-mark">?</span></div> : <div className="equation-bubble science-prompt"><span>{(level as ScienceLevel).prompt}</span></div>}
+        <p className="instruction">{isMath ? "Connect the sum to the right answer!" : isLogic ? (level as LogicLevel).category === "Odd One Out" ? "Find the one that is different!" : "Choose what comes next!" : "Match the science question to the right answer!"}</p>
+        {isMath ? <div className="equation-bubble"><span>{(level as MathLevel).a}</span><b>+</b><span>{(level as MathLevel).b}</span><b>=</b><span className="question-mark">?</span></div> : <div className={`equation-bubble ${isLogic ? "logic-prompt" : "science-prompt"}`}><span>{(level as ScienceLevel).prompt}</span></div>}
         <div className="connection-zone"><svg className="connection-lines" viewBox="0 0 1000 220" preserveAspectRatio="none" aria-hidden="true">{selected !== null && <path className={status === "correct" ? "right-line" : status === "wrong" ? "wrong-line" : ""} d={`M 500 0 C 500 100, ${125 + selected * 250} 90, ${125 + selected * 250} 220`} />}</svg><div className="trail-dot">✦</div><div className="answers">{choices.map((choice, index) => <button key={`${choice}-${index}`} className={`answer ${COLORS[index]} ${selected === index ? "selected" : ""}`} onClick={() => pick(choice, index)} disabled={status === "correct"} aria-label={`Answer ${choice}`}><span>{choice}</span><i aria-hidden="true" /></button>)}</div></div>
-        <div className={`feedback ${status}`}>{status === "playing" && <><span>👆</span> Tap an answer</>}{status === "wrong" && <><span>💪</span> Nearly! Try another one.</>}{status === "correct" && <><span className="celebrate">🎉</span><div><strong>{praise}</strong><small>{isMath ? `You found ${answer}!` : `That’s right — ${answer}!`}</small></div><button onClick={nextLevel}>{current.levelIndex === 49 ? "See my map" : "Next level"} <span>→</span></button></>}</div>
+        <div className={`feedback ${status}`}>{status === "playing" && <><span>👆</span> Tap an answer</>}{status === "wrong" && <><span>💪</span> Nearly! Try another one.</>}{status === "correct" && <><span className="celebrate">🎉</span><div><strong>{praise}</strong><small>{isMath ? `You found ${answer}!` : isLogic ? `Great thinking — ${answer}!` : `That’s right — ${answer}!`}</small></div><button onClick={nextLevel}>{current.levelIndex === 49 ? "See my map" : "Next level"} <span>→</span></button></>}</div>
       </section>
-      <button className="map-button" onClick={() => setShowMap(true)}>🗺️ {isMath ? "Maths" : "Science"} map</button>
-      {!started && <div className="overlay"><div className="welcome-card"><div className="welcome-confetti" aria-hidden="true"><span>★</span><span>●</span><span>✦</span><span>▲</span><span>★</span></div><div className="welcome-mascot">🦊</div><p className="eyebrow">A special adventure for</p><h2 className="child-greeting" aria-label="Hi Hridhaan!"><small>Hi</small>{[..."Hridhaan!"].map((letter, index) => <span key={index}>{letter}</span>)}</h2><h3>What would you like to play?</h3><p>Choose a game, earn stars and unlock every level.</p><div className="welcome-choices"><button onClick={() => begin("math")}>➕ Maths <span>→</span></button><button className="science-start" onClick={() => begin("science")}>🔬 Science <span>→</span></button></div></div></div>}
-      {showMap && <div className="overlay map-overlay" role="dialog" aria-modal="true" aria-label="Level map"><div className="map-card"><button className="close" onClick={() => setShowMap(false)} aria-label="Close level map">×</button><p className="eyebrow">Your {isMath ? "maths" : "science"} adventure</p><h2>{isMath ? "Maths" : "Science"} map</h2><p>{current.unlocked === 50 ? "Every level is unlocked — superstar!" : `${current.unlocked} of 50 levels unlocked`}</p><div className="level-grid">{levels.map((_, index) => { const isUnlocked = index + 1 <= current.unlocked; return <button key={index} disabled={!isUnlocked} onClick={() => chooseLevel(index)} className={`${isUnlocked ? "unlocked" : "locked"} ${index === current.levelIndex ? "current" : ""}`} aria-label={`Level ${index + 1}${isUnlocked ? "" : ", locked"}`}>{isUnlocked ? index + 1 : "🔒"}</button>; })}</div></div></div>}
+      <button className="map-button" onClick={() => setShowMap(true)}>🗺️ {isMath ? "Maths" : isLogic ? "Logic" : "Science"} map</button>
+      {!started && <div className="overlay"><div className="welcome-card"><div className="welcome-confetti" aria-hidden="true"><span>★</span><span>●</span><span>✦</span><span>▲</span><span>★</span></div><div className="welcome-mascot">🦊</div><p className="eyebrow">A special adventure for</p><h2 className="child-greeting" aria-label="Hi Hridhaan!"><small>Hi</small>{[..."Hridhaan!"].map((letter, index) => <span key={index}>{letter}</span>)}</h2><h3>What would you like to play?</h3><p>Choose a game, earn stars and unlock every level.</p><div className="welcome-choices"><button onClick={() => begin("math")}>➕ Maths <span>→</span></button><button className="science-start" onClick={() => begin("science")}>🔬 Science <span>→</span></button><button className="logic-start" onClick={() => begin("logic")}>🧩 Logic <span>→</span></button></div></div></div>}
+      {showMap && <div className="overlay map-overlay" role="dialog" aria-modal="true" aria-label="Level map"><div className="map-card"><button className="close" onClick={() => setShowMap(false)} aria-label="Close level map">×</button><p className="eyebrow">Your {isMath ? "maths" : isLogic ? "logic" : "science"} adventure</p><h2>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} map</h2><p>{current.unlocked === 50 ? "Every level is unlocked — superstar!" : `${current.unlocked} of 50 levels unlocked`}</p><div className="level-grid">{levels.map((_, index) => { const isUnlocked = index + 1 <= current.unlocked; return <button key={index} disabled={!isUnlocked} onClick={() => chooseLevel(index)} className={`${isUnlocked ? "unlocked" : "locked"} ${index === current.levelIndex ? "current" : ""}`} aria-label={`Level ${index + 1}${isUnlocked ? "" : ", locked"}`}>{isUnlocked ? index + 1 : "🔒"}</button>; })}</div></div></div>}
     </main>
   );
 }

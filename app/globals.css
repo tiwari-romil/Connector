@@ -45,10 +45,39 @@ button { font: inherit; }
 .subject-switch button:not(.active):hover { background: #f0ebff; transform: translateY(-1px); }
 .science-theme .brand-mark { background: #2996c7; box-shadow: 0 7px 0 #1776a1; }
 .science-theme .progress-track span { background: linear-gradient(90deg,#249aca,#54cdb5); }
+.logic-theme .brand-mark { background: #ef8e22; box-shadow: 0 7px 0 #bd6510; }
+.logic-theme .progress-track span { background: linear-gradient(90deg,#ed8c21,#f5c439); }
 .science-theme .science-prompt { width: min(620px,94%); min-width: 0; min-height: 96px; padding: 18px 28px; font-size: clamp(24px,4vw,37px); line-height: 1.12; letter-spacing: -.8px; background: linear-gradient(145deg,#2c9ecb,#247db5); box-shadow: 0 9px 0 #17628e, 0 18px 28px rgba(35,113,165,.24); }
 .science-card .answer span { width: min(150px,95%); height: 105px; padding: 10px; font-size: clamp(13px,1.8vw,18px); line-height: 1.05; letter-spacing: -.3px; text-shadow: 0 1px 0 rgba(0,0,0,.12); }
 .science-card .answer { height: 132px; }
+.logic-prompt { width: min(650px,94%); min-width: 0; min-height: 96px; padding: 18px 28px; font-size: clamp(24px,4vw,36px); line-height: 1.15; letter-spacing: -.8px; background: linear-gradient(145deg,#ee962a,#db6c25); box-shadow: 0 9px 0 #b94f16, 0 18px 28px rgba(183,92,25,.24); }
+.logic-card .answer span { width: min(130px,94%); height: 105px; padding: 8px; font-size: clamp(26px,3.5vw,46px); line-height: 1; }
+.logic-card .answer { height: 132px; }
 .welcome-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .welcome-choices button { border: 0; border-radius: 16px; padding: 15px 11px; color: white; background: #7351f1; box-shadow: 0 6px 0 #4c33b5; cursor: pointer; font-size: 17px; font-weight: 1000; }
 .welcome-choices .science-start { background: #279cc8; box-shadow: 0 6px 0 #176c91; }
-@media (max-width: 720px) { .topbar { gap: 8px; }.subject-switch { position: absolute; top: 57px; left: 50%; transform: translateX(-50%); white-space: nowrap; }.level-strip { margin-top: 64px; }.subject-switch button { padding: 7px 10px; font-size: 12px; }.science-theme .science-prompt { min-height: 102px; padding: 16px 18px; font-size: 23px; }.science-card .answer span { width: 90%; height: 90px; padding: 6px; font-size: 12px; }.science-card .answer { height: 115px; }.welcome-choices { grid-template-columns: 1fr; gap: 10px; }.welcome-choices button { padding: 13px; } }
+.welcome-choices .logic-start { background: #ed8d22; box-shadow: 0 6px 0 #bb6111; }
+@media (max-width: 720px) { .topbar { gap: 8px; }.subject-switch { position: absolute; top: 57px; left: 50%; transform: translateX(-50%); white-space: nowrap; }.level-strip { margin-top: 64px; }.subject-switch button { padding: 7px 7px; font-size: 11px; }.science-theme .science-prompt, .logic-theme .logic-prompt { min-height: 102px; padding: 16px 18px; font-size: 23px; }.science-card .answer span { width: 90%; height: 90px; padding: 6px; font-size: 12px; }.science-card .answer, .logic-card .answer { height: 115px; }.logic-card .answer span { width: 90%; height: 90px; font-size: 31px; }.welcome-choices { grid-template-columns: 1fr; gap: 10px; }.welcome-choices button { padding: 13px; } }
+@media (max-width: 480px) {
+  .game-shell { min-height: 100svh; padding: 10px 8px 18px; }
+  .cloud, .sparkles { display: none; }
+  .topbar { min-height: 43px; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 13px; box-shadow: 0 5px 0 #4d34ca; }
+  .stats { gap: 5px; }.stat { min-height: 38px; padding: 4px 8px; border-radius: 12px; font-size: 17px; }.stat strong { font-size: 14px; }.sound-button { min-height: 38px; padding: 5px 8px; border-radius: 12px; }
+  .subject-switch { top: 50px; width: calc(100vw - 16px); justify-content: space-between; padding: 3px; border-radius: 13px; }
+  .subject-switch button { flex: 1; padding: 8px 3px; font-size: 11px; }
+  .level-strip { margin: 58px 5px 10px; gap: 6px 10px; }.level-copy h1 { font-size: 16px; }.difficulty { font-size: 9px; padding: 5px 7px; }.progress-count { font-size: 12px; }
+  .play-card { min-height: 500px; padding: 17px 8px 14px; border-radius: 24px; }.mascot { display: none; }
+  .instruction { min-height: 34px; margin: 0 8px 9px; font-size: 14px; line-height: 1.2; }
+  .equation-bubble { min-width: 245px; padding: 10px 17px 13px; font-size: 44px; border-radius: 20px; box-shadow: 0 6px 0 #4e34bb, 0 13px 22px rgba(80,53,193,.2); }
+  .science-theme .science-prompt, .logic-theme .logic-prompt { width: calc(100% - 8px); min-height: 78px; padding: 12px 14px; font-size: 20px; border-radius: 19px; }.logic-theme .logic-prompt { box-shadow: 0 6px 0 #b94f16, 0 13px 22px rgba(183,92,25,.2); }
+  .connection-zone { height: 230px; margin-top: 12px; }.connection-lines { inset: 0 0 38px; height: 190px; }.connection-lines path { stroke-width: 6px; }.trail-dot { transform: scale(.78); }
+  .answers { gap: 0; }.answer { height: 106px; }.answer span { width: 64px; height: 70px; font-size: 25px; }.answer i { height: 23px; }.answer i::after { bottom: 19px; }
+  .science-card .answer, .logic-card .answer { height: 106px; }.science-card .answer span { width: 94%; height: 76px; font-size: 11px; }.logic-card .answer span { width: 76px; height: 76px; font-size: 28px; }
+  .feedback { min-height: 52px; font-size: 14px; }.feedback.correct { gap: 7px; padding: 7px 8px; }.feedback.correct > span { font-size: 20px; }.feedback.correct strong { font-size: 15px; }.feedback.correct small { font-size: 11px; }.feedback button { flex-shrink: 0; padding: 10px 9px; font-size: 13px; }
+  .map-button { margin-top: 12px; padding: 9px 14px; }.map-card { max-height: 92svh; padding: 24px 16px; border-radius: 26px; }.level-grid { gap: 7px; }.level-grid button { border-radius: 10px; }
+  .welcome-card { padding: 27px 20px 22px; border-radius: 30px; }.welcome-mascot { font-size: 74px; margin-top: -72px; }.welcome-card h2 { font-size: 42px; }.welcome-card h3 { font-size: 19px; }.welcome-card p:not(.eyebrow) { margin: 8px 0; font-size: 14px; }.welcome-choices { margin-top: 12px; }.welcome-choices button { font-size: 16px; }
+}
+@media (max-height: 620px) and (min-width: 481px) and (max-width: 900px) {
+  .game-shell { padding-top: 10px; }.level-strip { margin: 10px auto; }.play-card { min-height: 400px; padding-top: 14px; }.mascot { display: none; }.instruction { margin-bottom: 9px; }.connection-zone { height: 190px; margin-top: 10px; }.answer, .science-card .answer, .logic-card .answer { height: 95px; }.answer span { width: 72px; height: 74px; }.science-card .answer span, .logic-card .answer span { height: 76px; }.feedback { min-height: 48px; }
+}
