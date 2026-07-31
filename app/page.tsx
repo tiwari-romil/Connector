@@ -5,9 +5,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 type Level = { a: number; b: number; difficulty: "Easy" | "Medium" | "Tricky" };
 
 const LEVELS: Level[] = Array.from({ length: 50 }, (_, i) => {
-  if (i < 15) return { a: 2 + ((i * 3) % 13), b: 3 + ((i * 7) % 13), difficulty: "Easy" };
-  if (i < 35) return { a: 18 + ((i * 7) % 18), b: 6 + ((i * 5) % 16), difficulty: "Medium" };
-  return { a: 30 + ((i * 5) % 31), b: 8 + ((i * 9) % 28), difficulty: "Tricky" };
+  // Every puzzle stays within a gentle two-digit + one-digit addition pattern.
+  if (i < 18) return { a: 10 + ((i * 3) % 10), b: 1 + (i % 4), difficulty: "Easy" };
+  if (i < 35) return { a: 15 + ((i * 4) % 10), b: 2 + (i % 6), difficulty: "Medium" };
+  return { a: 20 + ((i * 3) % 10), b: 4 + (i % 6), difficulty: "Tricky" };
 });
 
 const COLORS = ["coral", "sky", "sun", "mint"];
@@ -37,6 +38,7 @@ export default function Home() {
   const level = LEVELS[levelIndex];
   const answer = level.a + level.b;
   const choices = useMemo(() => choicesFor(level, levelIndex), [level, levelIndex]);
+  const praise = levelIndex % 2 === 0 ? "Wow!" : "Awesome!";
 
   useEffect(() => {
     const saved = localStorage.getItem("math-adventure-progress");
@@ -106,6 +108,16 @@ export default function Home() {
     tone(523.3, 0.25, "sine", 0.08, 0.12);
   }
 
+  function speakPraise() {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const message = new SpeechSynthesisUtterance(praise);
+    message.rate = 0.9;
+    message.pitch = 1.35;
+    message.volume = 1;
+    window.speechSynthesis.speak(message);
+  }
+
   function pick(value: number, index: number) {
     if (status === "correct") return;
     setSelected(index);
@@ -118,6 +130,7 @@ export default function Home() {
       tone(523.3, 0.18, "sine", 0.1);
       tone(659.3, 0.18, "sine", 0.1, 0.12);
       tone(784, 0.32, "sine", 0.1, 0.24);
+      speakPraise();
     } else {
       setStatus("wrong");
       setWrongTries((value) => value + 1);
@@ -210,7 +223,7 @@ export default function Home() {
           {status === "correct" && (
             <>
               <span className="celebrate">🎉</span>
-              <div><strong>Amazing!</strong><small>You found {answer}!</small></div>
+              <div><strong>{praise}</strong><small>You found {answer}!</small></div>
               <button onClick={nextLevel}>{levelIndex === 49 ? "See my map" : "Next level"} <span>→</span></button>
             </>
           )}
