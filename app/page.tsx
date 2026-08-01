@@ -9,11 +9,13 @@ type ScienceLevel = { prompt: string; answer: string; distractors: string[]; dif
 type LogicLevel = ScienceLevel & { category: "Odd One Out" | "What Comes Next?" };
 type Progress = { levelIndex: number; unlocked: number; stars: number };
 type AdventureProgress = Record<Subject, Progress>;
+const LEVELS_PER_SUBJECT = 70;
+const EASY_LEVEL_COUNT = 50;
 
-const MATH_LEVELS: MathLevel[] = Array.from({ length: 50 }, (_, i) => {
-  if (i < 18) return { a: 10 + ((i * 3) % 10), b: 1 + (i % 4), difficulty: "Easy" };
-  if (i < 35) return { a: 15 + ((i * 4) % 10), b: 2 + (i % 6), difficulty: "Medium" };
-  return { a: 20 + ((i * 3) % 10), b: 4 + (i % 6), difficulty: "Tricky" };
+const MATH_LEVELS: MathLevel[] = Array.from({ length: LEVELS_PER_SUBJECT }, (_, i) => {
+  if (i < EASY_LEVEL_COUNT) return { a: 10 + ((i * 7) % 80), b: 1 + ((i * 3) % 9), difficulty: "Easy" };
+  const mediumIndex = i - EASY_LEVEL_COUNT;
+  return { a: 24 + ((mediumIndex * 9) % 56), b: 12 + ((mediumIndex * 7) % 38), difficulty: "Medium" };
 });
 
 const SCIENCE_LEVELS: ScienceLevel[] = [
@@ -67,12 +69,33 @@ const SCIENCE_LEVELS: ScienceLevel[] = [
   ["What can make leaves move?", "Wind", "A spoon", "A pencil", "A sock"],
   ["What helps plants grow?", "Rain", "Plastic", "Paint", "Dust"],
   ["What do we use to look at tiny things?", "A magnifying glass", "A pillow", "A fork", "A shoe"],
-].map(([prompt, answer, ...distractors], index) => ({
+].map(([prompt, answer, ...distractors]) => ({
   prompt,
   answer,
   distractors,
-  difficulty: index < 18 ? "Easy" : index < 35 ? "Medium" : "Tricky",
-}));
+  difficulty: "Easy" as Difficulty,
+})).concat([
+  ["Which organ pumps blood around your body?", "Heart", "Lungs", "Stomach", "Brain"],
+  ["Which gas do humans need to breathe?", "Oxygen", "Carbon dioxide", "Helium", "Steam"],
+  ["Which gas do plants take in to make food?", "Carbon dioxide", "Oxygen", "Nitrogen", "Steam"],
+  ["What part of a plant takes in water from soil?", "Roots", "Petals", "Fruit", "Stem"],
+  ["What do leaves use sunlight to make?", "Food for the plant", "Rain", "Soil", "Seeds"],
+  ["Which material is best for a raincoat?", "Waterproof plastic", "Paper", "Cotton wool", "Tissue"],
+  ["A magnet attracts which material?", "Iron", "Wood", "Glass", "Rubber"],
+  ["Which change can be changed back?", "Ice melting", "Paper burning", "Wood rotting", "Egg cooking"],
+  ["What happens to water when it gets very hot?", "It evaporates", "It freezes", "It becomes soil", "It turns to metal"],
+  ["What are tiny water drops on a cold bottle called?", "Condensation", "Evaporation", "Freezing", "Melting"],
+  ["Which force pulls objects toward Earth?", "Gravity", "Magnetism", "Friction", "Electricity"],
+  ["What force slows a bike when brakes touch the wheel?", "Friction", "Gravity", "Light", "Sound"],
+  ["What travels fastest?", "Light", "Sound", "A bicycle", "A river"],
+  ["Which item needs electricity to work?", "A lamp", "A book", "A wooden spoon", "A ball"],
+  ["Which simple machine helps lift a flag?", "Pulley", "Magnet", "Battery", "Thermometer"],
+  ["How long does Earth take to go around the Sun?", "One year", "One day", "One week", "One month"],
+  ["What causes day and night?", "Earth spins", "The Sun moves around Earth", "Clouds cover space", "The Moon turns off"],
+  ["Which planet is known for its rings?", "Saturn", "Earth", "Mars", "Mercury"],
+  ["Which animal is a herbivore?", "Rabbit", "Lion", "Eagle", "Shark"],
+  ["What should you use to measure temperature?", "Thermometer", "Ruler", "Balance", "Compass"],
+].map(([prompt, answer, ...distractors]) => ({ prompt, answer, distractors, difficulty: "Medium" as Difficulty })));
 
 const LOGIC_LEVELS: LogicLevel[] = [
   ["Odd One Out", "Which one is different?", "🐶", "🐱", "🐭", "🍎"],
@@ -125,10 +148,31 @@ const LOGIC_LEVELS: LogicLevel[] = [
   ["What Comes Next?", "What comes next?  🔺  🔺  🔵  🔺  🔺  ?", "🔵", "🔺", "🟨", "🟩"],
   ["What Comes Next?", "What comes next?  🥕  🥦  🥕  🥦  ?", "🥕", "🥦", "🌽", "🍅"],
   ["What Comes Next?", "What comes next?  7  8  9  ?", "10", "11", "8", "6"],
-].map(([category, prompt, answer, ...distractors], index) => ({
+].map(([category, prompt, answer, ...distractors]) => ({
   category: category as LogicLevel["category"], prompt, answer, distractors,
-  difficulty: index < 18 ? "Easy" : index < 35 ? "Medium" : "Tricky",
-}));
+  difficulty: "Easy" as Difficulty,
+})).concat([
+  ["What Comes Next?", "What comes next?  2  4  6  8  ?", "10", "9", "11", "12"],
+  ["What Comes Next?", "What comes next?  15  20  25  30  ?", "35", "34", "36", "40"],
+  ["What Comes Next?", "What comes next?  30  27  24  21  ?", "18", "17", "19", "15"],
+  ["What Comes Next?", "What comes next?  5  10  15  20  ?", "25", "24", "26", "30"],
+  ["What Comes Next?", "What comes next?  1  4  7  10  ?", "13", "12", "14", "15"],
+  ["What Comes Next?", "What comes next?  2  5  8  11  ?", "14", "13", "15", "16"],
+  ["What Comes Next?", "What comes next?  20  18  16  14  ?", "12", "11", "13", "10"],
+  ["What Comes Next?", "What comes next?  3  6  12  24  ?", "48", "36", "42", "50"],
+  ["What Comes Next?", "What comes next?  🔴  🔵  🟢  🔴  🔵  ?", "🟢", "🔴", "🔵", "🟡"],
+  ["What Comes Next?", "What comes next?  ▲  ●  ●  ▲  ●  ●  ?", "▲", "●", "■", "★"],
+  ["Odd One Out", "Which does NOT belong with the others?", "🐧", "🐬", "🐋", "🦈"],
+  ["Odd One Out", "Which does NOT belong with the others?", "🍎", "🟨", "🔺", "⚪"],
+  ["Odd One Out", "Which does NOT belong with the others?", "9", "2", "4", "6"],
+  ["Odd One Out", "Which does NOT belong with the others?", "🚲", "🌱", "🌳", "🌻"],
+  ["Odd One Out", "Which does NOT belong with the others?", "🥕", "🍎", "🍌", "🍓"],
+  ["What Comes Next?", "What comes next?  4  8  12  16  ?", "20", "18", "19", "21"],
+  ["What Comes Next?", "What comes next?  7  14  21  28  ?", "35", "34", "36", "42"],
+  ["What Comes Next?", "What comes next?  1  4  9  16  ?", "25", "20", "24", "26"],
+  ["Odd One Out", "Which does NOT belong with the others?", "25", "12", "18", "24"],
+  ["Odd One Out", "Which does NOT belong with the others?", "🐠", "🐝", "🦋", "🐞"],
+].map(([category, prompt, answer, ...distractors]) => ({ category: category as LogicLevel["category"], prompt, answer, distractors, difficulty: "Medium" as Difficulty })));
 
 const COLORS = ["coral", "sky", "sun", "mint"];
 const MASCOTS = ["🦊", "🐼", "🦁", "🐸", "🐨"];
@@ -183,13 +227,13 @@ export default function Home() {
       if (saved) {
         const data = JSON.parse(saved);
         setProgress({
-          math: { levelIndex: Math.min(49, Math.max(0, data.math?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.math?.unlocked || 1)), stars: Math.max(0, data.math?.stars || 0) },
-          science: { levelIndex: Math.min(49, Math.max(0, data.science?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.science?.unlocked || 1)), stars: Math.max(0, data.science?.stars || 0) },
-          logic: { levelIndex: Math.min(49, Math.max(0, data.logic?.levelIndex || 0)), unlocked: Math.min(50, Math.max(1, data.logic?.unlocked || 1)), stars: Math.max(0, data.logic?.stars || 0) },
+          math: { levelIndex: Math.min(LEVELS_PER_SUBJECT - 1, Math.max(0, data.math?.levelIndex || 0)), unlocked: Math.min(LEVELS_PER_SUBJECT, Math.max(1, data.math?.unlocked || 1)), stars: Math.max(0, data.math?.stars || 0) },
+          science: { levelIndex: Math.min(LEVELS_PER_SUBJECT - 1, Math.max(0, data.science?.levelIndex || 0)), unlocked: Math.min(LEVELS_PER_SUBJECT, Math.max(1, data.science?.unlocked || 1)), stars: Math.max(0, data.science?.stars || 0) },
+          logic: { levelIndex: Math.min(LEVELS_PER_SUBJECT - 1, Math.max(0, data.logic?.levelIndex || 0)), unlocked: Math.min(LEVELS_PER_SUBJECT, Math.max(1, data.logic?.unlocked || 1)), stars: Math.max(0, data.logic?.stars || 0) },
         });
       } else if (oldMath) {
         const data = JSON.parse(oldMath);
-        setProgress({ ...INITIAL_PROGRESS, math: { levelIndex: 0, unlocked: Math.min(50, Math.max(1, data.unlocked || 1)), stars: Math.max(0, data.stars || 0) } });
+        setProgress({ ...INITIAL_PROGRESS, math: { levelIndex: 0, unlocked: Math.min(LEVELS_PER_SUBJECT, Math.max(1, data.unlocked || 1)), stars: Math.max(0, data.stars || 0) } });
       }
     } catch { localStorage.removeItem("learning-adventure-progress"); }
   }, []);
@@ -237,7 +281,7 @@ export default function Home() {
     setSelected(index);
     if (value === answer) {
       setStatus("correct"); const earned = wrongTries === 0 ? 3 : wrongTries === 1 ? 2 : 1;
-      setProgress((previous) => ({ ...previous, [subject]: { ...previous[subject], stars: previous[subject].stars + earned, unlocked: Math.max(previous[subject].unlocked, Math.min(50, current.levelIndex + 2)) } }));
+      setProgress((previous) => ({ ...previous, [subject]: { ...previous[subject], stars: previous[subject].stars + earned, unlocked: Math.max(previous[subject].unlocked, Math.min(LEVELS_PER_SUBJECT, current.levelIndex + 2)) } }));
       setStreak((value) => value + 1); tone(523.3, 0.18, "sine", 0.1); tone(659.3, 0.18, "sine", 0.1, 0.12); tone(784, 0.32, "sine", 0.1, 0.24); speakPraise();
     } else {
       setStatus("wrong"); setWrongTries((value) => value + 1); setStreak(0); tone(180, 0.18, "sawtooth", 0.045);
@@ -246,7 +290,7 @@ export default function Home() {
   }
 
   function nextLevel() {
-    if (current.levelIndex === 49) { setShowMap(true); return; }
+    if (current.levelIndex === LEVELS_PER_SUBJECT - 1) { setShowMap(true); return; }
     setProgress((previous) => ({ ...previous, [subject]: { ...previous[subject], levelIndex: previous[subject].levelIndex + 1 } })); resetPuzzle();
   }
 
@@ -263,17 +307,17 @@ export default function Home() {
         <div className="subject-switch" aria-label="Choose a learning game"><button className={isMath ? "active" : ""} onClick={() => switchSubject("math")}>➕ Maths</button><button className={subject === "science" ? "active" : ""} onClick={() => switchSubject("science")}>🔬 Science</button><button className={isLogic ? "active" : ""} onClick={() => switchSubject("logic")}>🧩 Logic</button></div>
         <div className="stats"><div className="stat"><span>⭐</span><strong>{totalStars}</strong></div><div className="stat"><span>🔥</span><strong>{streak}</strong></div><button className="sound-button" onClick={toggleMusic} aria-label={musicOn ? "Turn music off" : "Turn music on"}>{musicOn ? "🔊" : "🔇"}</button></div>
       </header>
-      <section className="level-strip" aria-label="Level progress"><div className="level-copy"><span className={`difficulty ${level.difficulty.toLowerCase()}`}>{level.difficulty}</span><h1>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} · Level {current.levelIndex + 1}</h1></div><div className="progress-track"><span style={{ width: `${((current.levelIndex + 1) / 50) * 100}%` }} /></div><span className="progress-count">{current.levelIndex + 1} / 50</span></section>
+      <section className="level-strip" aria-label="Level progress"><div className="level-copy"><span className={`difficulty ${level.difficulty.toLowerCase()}`}>{level.difficulty}</span><h1>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} · Level {current.levelIndex + 1}</h1></div><div className="progress-track"><span style={{ width: `${((current.levelIndex + 1) / LEVELS_PER_SUBJECT) * 100}%` }} /></div><span className="progress-count">{current.levelIndex + 1} / {LEVELS_PER_SUBJECT}</span></section>
       <section className={`play-card ${status} ${isMath ? "math-card" : isLogic ? "logic-card" : "science-card"}`} aria-live="polite">
         <div className="mascot" aria-hidden="true">{MASCOTS[Math.floor(current.levelIndex / 10)]}</div>
         <p className="instruction">{isMath ? "Connect the sum to the right answer!" : isLogic ? (level as LogicLevel).category === "Odd One Out" ? "Find the one that is different!" : "Choose what comes next!" : "Match the science question to the right answer!"}</p>
         {isMath ? <div className="equation-bubble"><span>{(level as MathLevel).a}</span><b>+</b><span>{(level as MathLevel).b}</span><b>=</b><span className="question-mark">?</span></div> : <div className={`equation-bubble ${isLogic ? "logic-prompt" : "science-prompt"}`}><span>{(level as ScienceLevel).prompt}</span></div>}
         <div className="connection-zone"><svg className="connection-lines" viewBox="0 0 1000 220" preserveAspectRatio="none" aria-hidden="true">{selected !== null && <path className={status === "correct" ? "right-line" : status === "wrong" ? "wrong-line" : ""} d={`M 500 0 C 500 100, ${125 + selected * 250} 90, ${125 + selected * 250} 220`} />}</svg><div className="trail-dot">✦</div><div className="answers">{choices.map((choice, index) => <button key={`${choice}-${index}`} className={`answer ${COLORS[index]} ${selected === index ? "selected" : ""}`} onClick={() => pick(choice, index)} disabled={status === "correct"} aria-label={`Answer ${choice}`}><span>{choice}</span><i aria-hidden="true" /></button>)}</div></div>
-        <div className={`feedback ${status}`}>{status === "playing" && <><span>👆</span> Tap an answer</>}{status === "wrong" && <><span>💪</span> Nearly! Try another one.</>}{status === "correct" && <><span className="celebrate">🎉</span><div><strong>{praise}</strong><small>{isMath ? `You found ${answer}!` : isLogic ? `Great thinking — ${answer}!` : `That’s right — ${answer}!`}</small></div><button onClick={nextLevel}>{current.levelIndex === 49 ? "See my map" : "Next level"} <span>→</span></button></>}</div>
+        <div className={`feedback ${status}`}>{status === "playing" && <><span>👆</span> Tap an answer</>}{status === "wrong" && <><span>💪</span> Nearly! Try another one.</>}{status === "correct" && <><span className="celebrate">🎉</span><div><strong>{praise}</strong><small>{isMath ? `You found ${answer}!` : isLogic ? `Great thinking — ${answer}!` : `That’s right — ${answer}!`}</small></div><button onClick={nextLevel}>{current.levelIndex === LEVELS_PER_SUBJECT - 1 ? "See my map" : "Next level"} <span>→</span></button></>}</div>
       </section>
       <button className="map-button" onClick={() => setShowMap(true)}>🗺️ {isMath ? "Maths" : isLogic ? "Logic" : "Science"} map</button>
       {!started && <div className="overlay"><div className="welcome-card"><div className="welcome-confetti" aria-hidden="true"><span>★</span><span>●</span><span>✦</span><span>▲</span><span>★</span></div><div className="welcome-mascot">🦊</div><p className="eyebrow">A special adventure for</p><h2 className="child-greeting" aria-label="Hi Hridhaan!"><small>Hi</small>{[..."Hridhaan!"].map((letter, index) => <span key={index}>{letter}</span>)}</h2><h3>What would you like to play?</h3><p>Choose a game, earn stars and unlock every level.</p><div className="welcome-choices"><button onClick={() => begin("math")}>➕ Maths <span>→</span></button><button className="science-start" onClick={() => begin("science")}>🔬 Science <span>→</span></button><button className="logic-start" onClick={() => begin("logic")}>🧩 Logic <span>→</span></button></div></div></div>}
-      {showMap && <div className="overlay map-overlay" role="dialog" aria-modal="true" aria-label="Level map"><div className="map-card"><button className="close" onClick={() => setShowMap(false)} aria-label="Close level map">×</button><p className="eyebrow">Your {isMath ? "maths" : isLogic ? "logic" : "science"} adventure</p><h2>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} map</h2><p>{current.unlocked === 50 ? "Every level is unlocked — superstar!" : `${current.unlocked} of 50 levels unlocked`}</p><div className="level-grid">{levels.map((_, index) => { const isUnlocked = index + 1 <= current.unlocked; return <button key={index} disabled={!isUnlocked} onClick={() => chooseLevel(index)} className={`${isUnlocked ? "unlocked" : "locked"} ${index === current.levelIndex ? "current" : ""}`} aria-label={`Level ${index + 1}${isUnlocked ? "" : ", locked"}`}>{isUnlocked ? index + 1 : "🔒"}</button>; })}</div></div></div>}
+      {showMap && <div className="overlay map-overlay" role="dialog" aria-modal="true" aria-label="Level map"><div className="map-card"><button className="close" onClick={() => setShowMap(false)} aria-label="Close level map">×</button><p className="eyebrow">Your {isMath ? "maths" : isLogic ? "logic" : "science"} adventure</p><h2>{isMath ? "Maths" : isLogic ? "Logic" : "Science"} map</h2><p>{current.unlocked === LEVELS_PER_SUBJECT ? "Every level is unlocked — superstar!" : `${current.unlocked} of ${LEVELS_PER_SUBJECT} levels unlocked`}</p><div className="level-grid">{levels.map((_, index) => { const isUnlocked = index + 1 <= current.unlocked; return <button key={index} disabled={!isUnlocked} onClick={() => chooseLevel(index)} className={`${isUnlocked ? "unlocked" : "locked"} ${index === current.levelIndex ? "current" : ""}`} aria-label={`Level ${index + 1}${isUnlocked ? "" : ", locked"}`}>{isUnlocked ? index + 1 : "🔒"}</button>; })}</div></div></div>}
     </main>
   );
 }
