@@ -98,6 +98,36 @@ button { font: inherit; }
 .number-picture small { display: flex; justify-content: center; gap: 4px; margin-top: 4px; color: #756b86; font-size: 9px; font-weight: 900; }.number-picture small span:first-child { color: #6850cd; }.number-picture small span:last-child { color: #a66c00; }.answer-picture .number-picture > b { color: #159762; }.math-hint { margin: 11px auto -3px; }.math-hint > button { border: 0; border-radius: 13px; padding: 9px 13px; color: #5d47b6; background: #eee9ff; box-shadow: 0 3px 0 #d5cbff; font-weight: 900; cursor: pointer; }.hint-picture { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; width: min(440px,100%); margin: 11px auto 0; padding: 10px; border-radius: 17px; background: #fbfaff; }.hint-picture > span { color: #6f6384; font-size: 21px; font-weight: 1000; }.hint-picture p { grid-column: 1 / -1; margin: 0; color: #6b607b; font-size: 13px; font-weight: 800; }.extra-examples { margin: 16px 0 4px; text-align: left; }.extra-examples h3 { margin: 0 0 8px; color: #4d425e; font-size: 18px; }.extra-examples > div { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }.extra-examples p { display: grid; gap: 4px; margin: 0; padding: 10px; border-radius: 14px; background: #f7f4ff; color: #685d79; font-size: 12px; font-weight: 800; }.extra-examples strong { color: #5540b4; font-size: 15px; }.extra-examples span { padding-left: 9px; border-left: 4px solid #aa98fc; }.extra-examples p:last-child { background: #eafaf1; }.extra-examples p:last-child strong { color: #17865d; }.extra-examples p:last-child span { border-left-color: #6fce9d; }
 @media (max-width: 620px) { .hint-picture { width: calc(100% - 20px); }.extra-examples > div { grid-template-columns: 1fr; }.extra-examples p { font-size: 11px; } }
 
+/* Playful motion stays away from the answer text, so it feels exciting without being distracting. */
+.sky-friends { position: absolute; inset: 92px 7% auto; display: flex; justify-content: space-between; pointer-events: none; font-size: clamp(25px,3vw,43px); filter: drop-shadow(0 7px 5px rgba(66,54,136,.14)); }
+.sky-friends span { display: block; animation: sky-bob 3.8s ease-in-out infinite; }
+.sky-friends span:nth-child(1) { animation-delay: -.8s; }.sky-friends span:nth-child(2) { animation-delay: -2.1s; }.sky-friends span:nth-child(3) { animation-delay: -3.2s; }
+.cloud-one { animation: cloud-drift 12s ease-in-out infinite alternate; }.cloud-two { animation: cloud-drift 16s ease-in-out infinite alternate-reverse; }
+.sparkles { animation: sparkle-shimmer 2.8s ease-in-out infinite; }
+.question-pop { animation: question-pop .5s cubic-bezier(.18,.9,.28,1.24) both; }
+.mascot { animation: mascot-bounce 2.4s ease-in-out infinite; transform-origin: bottom center; }
+.answer { transition: transform .16s ease, filter .16s ease; }
+.answer:hover:not(:disabled), .answer:focus-visible:not(:disabled) { transform: translateY(-8px) rotate(-1deg) scale(1.035); filter: brightness(1.08) saturate(1.08); }
+.answer:nth-child(even):hover:not(:disabled), .answer:nth-child(even):focus-visible:not(:disabled) { transform: translateY(-8px) rotate(1deg) scale(1.035); }
+.answer:active:not(:disabled) { transform: translateY(1px) scale(.96); }
+.play-card.wrong { animation: gentle-shake .42s ease-in-out; }
+.play-card.correct .mascot { animation: happy-dance .55s ease-in-out infinite alternate; }
+.play-card.correct .equation-bubble { animation: winner-pop .55s ease both; }
+.play-card.correct .selected span { animation: winner-pop .5s ease both; }
+.celebration-burst { position: fixed; inset: 0; z-index: 15; overflow: hidden; pointer-events: none; }
+.celebration-burst span { position: absolute; top: 34%; left: 50%; font-size: clamp(24px,4vw,54px); animation: confetti-burst 1.35s cubic-bezier(.16,.76,.3,1) both; }
+.celebration-burst span:nth-child(1) { --x: -44vw; --y: -29vh; animation-delay: .02s; }.celebration-burst span:nth-child(2) { --x: -28vw; --y: -41vh; animation-delay: .07s; }.celebration-burst span:nth-child(3) { --x: -8vw; --y: -34vh; animation-delay: .13s; }.celebration-burst span:nth-child(4) { --x: 14vw; --y: -45vh; animation-delay: .04s; }.celebration-burst span:nth-child(5) { --x: 34vw; --y: -30vh; animation-delay: .11s; }.celebration-burst span:nth-child(6) { --x: 43vw; --y: -12vh; animation-delay: .17s; }.celebration-burst span:nth-child(7) { --x: 29vw; --y: 18vh; animation-delay: .09s; }.celebration-burst span:nth-child(8) { --x: 5vw; --y: 29vh; animation-delay: .15s; }.celebration-burst span:nth-child(9) { --x: -23vw; --y: 22vh; animation-delay: .06s; }.celebration-burst span:nth-child(10) { --x: -42vw; --y: 7vh; animation-delay: .19s; }
+@keyframes cloud-drift { to { translate: 36px -13px; } }
+@keyframes sky-bob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
+@keyframes sparkle-shimmer { 50% { opacity: .35; transform: scale(1.1); } }
+@keyframes question-pop { 0% { opacity: 0; transform: translateY(-22px) scale(.72) rotate(-3deg); } 100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
+@keyframes mascot-bounce { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-11px) rotate(4deg); } }
+@keyframes happy-dance { from { transform: translateY(-4px) rotate(-12deg) scale(1.06); } to { transform: translateY(-14px) rotate(12deg) scale(1.13); } }
+@keyframes gentle-shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+@keyframes winner-pop { 0% { transform: scale(.75) rotate(-6deg); } 65% { transform: scale(1.16) rotate(4deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes confetti-burst { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.2) rotate(0); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.1) rotate(390deg); } }
+@media (max-width: 480px) { .sky-friends { display: none; }.celebration-burst span { font-size: 28px; } }
+
 /* Ones are taught as blocks, so use square unit blocks rather than round dots. */
 .one-block { display: block; width: 11px; height: 11px; border-radius: 2px; background: #f6b833; box-shadow: inset -2px -2px 0 rgba(164,100,0,.18); }
 .taken-block { position: relative; background: #ed7488; }
