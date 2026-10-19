@@ -1,14 +1,14 @@
-# Connector — Improvement Plan for Hridhaan (age 5, Senior KG)
+# Connector — Improvement Plan (target player: age 5, Senior KG)
 
 Goal: make Connector **fun, genuinely challenging, and engaging** for a 5-year-old, using
-LogIQids-style (KG / Class 1 logical-reasoning olympiad) puzzles as the model for the Logic track.
+junior logical-reasoning olympiad (KG / Class 1) style puzzles as the model for the Logic track.
 
 ---
 
 ## 1. Review — what's there today
 
 **Working well**
-- Warm, personal welcome ("Hi Hridhaan!"), big colourful buttons, celebration burst, spoken praise.
+- Warm, personal welcome (greets the child by name), big colourful buttons, celebration burst, spoken praise.
 - Rods-and-blocks place-value visuals (Learn screen + Medium maths hint) — good concrete maths.
 - Discovery missions use a solid predict → observe → explain loop.
 - Keyboard 1–4 controls, progress saved in the browser, level map.
@@ -17,16 +17,15 @@ LogIQids-style (KG / Class 1 logical-reasoning olympiad) puzzles as the model fo
 
 | # | Issue | Where | Why it matters |
 |---|-------|-------|----------------|
-| 1 | **Too much reading.** Questions are text ("Which gas do plants take in…"). Read-aloud exists only inside Discovery; the quiz only speaks "Wow!/Awesome!" | `page.tsx` quiz card | A Senior KG child can't play alone — he needs an adult to read every question. |
-| 2 | **Difficulty jumps far past age level.** Maths "Easy" is already up to 89 + 9 with carrying; Medium is 2-digit + 2-digit. Science Medium covers photosynthesis, condensation, gravity, Saturn — Class 3–5 content. Logic Medium has ×2 doubling (3,6,12,24) and square numbers (1,4,9,16). Discovery "Challenge" = 46 + 17 and 4 × 6. | `MATH_LEVELS`, `SCIENCE_LEVELS` Medium, `LOGIC_LEVELS` Medium, `discovery-model.ts` | Frustration → he either quits or guesses. |
+| 1 | **Too much reading.** Questions are text ("Which gas do plants take in…"). Read-aloud exists only inside Discovery; the quiz only speaks "Wow!/Awesome!" | `page.tsx` quiz card | A Senior KG child can't play alone — they need an adult to read every question. |
+| 2 | **Difficulty jumps far past age level.** Maths "Easy" is already up to 89 + 9 with carrying; Medium is 2-digit + 2-digit. Science Medium covers photosynthesis, condensation, gravity, Saturn — Class 3–5 content. Logic Medium has ×2 doubling (3,6,12,24) and square numbers (1,4,9,16). Discovery "Challenge" = 46 + 17 and 4 × 6. | `MATH_LEVELS`, `SCIENCE_LEVELS` Medium, `LOGIC_LEVELS` Medium, `discovery-model.ts` | Frustration → the child either quits or guesses. |
 | 3 | **Guessing always wins.** 4 options, unlimited taps, still earns 1 star. Answer slot also rotates predictably (`index % 4`), and maths wrong answers are always answer+2 / −3 / +5. | `pick()`, `mathChoicesFor`, `scienceChoicesFor` | No real challenge; kids discover tap-everything fast. |
-| 4 | **Logic is only 2 puzzle types** (Odd One Out, What Comes Next), and the Easy odd-ones are trivial (3 animals + an apple). | `LOGIC_LEVELS` | LogIQids KG papers mix ~10 reasoning types; this is the most "brainy" part of the game and it's the thinnest. |
+| 4 | **Logic is only 2 puzzle types** (Odd One Out, What Comes Next), and the Easy odd-ones are trivial (3 animals + an apple). | `LOGIC_LEVELS` | Junior olympiad papers mix ~10 reasoning types; this is the most "brainy" part of the game and it's the thinnest. |
 | 5 | **Some answers are ambiguous.** 🐧🐬🐋🦈 (penguin? shark is the only fish…), 25/12/18/24 (odd one? not a multiple of 6? not a multiple of 3?). | Logic Medium | Correct thinking gets marked wrong — bad for confidence. |
 | 6 | **Everything is multiple-choice tapping.** No dragging, building, drawing paths or ordering. | Quiz mode | 5-year-olds stay engaged through *doing*, not selecting. |
 | 7 | **Default screen is Discovery mode** with dropdowns, "field notebook", "fair comparison" text. | `discoveryMode` defaults `true` | Parent-oriented UI is the first thing a child sees. |
 | 8 | **Weak reward loop.** Stars are just a counter; nothing to spend/collect; 70-level linear grind; music is a 4-note loop forever. | Header, `startMusic` | Little reason to come back tomorrow. |
 | 9 | **Scaffold leftovers**: `chatgpt-auth.ts`, `db/`, `drizzle`, `examples/d1`, Cloudflare/D1 config unused by the game. | repo root | Noise for future changes. |
-| 10 | ⚠️ **Personal document in the project folder.** `tmp/pdfs/` contains images of a filled government form with ID numbers. `tmp/` is **not** in `.gitignore`, so a `git add .` would push it to GitHub. | `tmp/` | Privacy risk — fix first. |
 
 ---
 
@@ -41,9 +40,9 @@ LogIQids-style (KG / Class 1 logical-reasoning olympiad) puzzles as the model fo
 
 ---
 
-## 3. LogIQids-style puzzle types to add (KG / Class 1 level)
+## 3. Olympiad-style puzzle types to add (KG / Class 1 level)
 
-These are the reasoning areas typical of LogIQids junior papers, turned into original, picture-only puzzles.
+These are the reasoning areas typical of junior reasoning-olympiad papers, turned into original, picture-only puzzles.
 Each should be a **generator** (random but valid) with 3 difficulty tiers, not a hard-coded list.
 
 | Type | Example (Tier 1 → Tier 3) | Interaction |
@@ -68,7 +67,7 @@ Fix existing Logic content: remove ambiguous items, move doubling/square-number 
 
 ---
 
-## 4. Re-pitch Maths and Science to his age
+## 4. Re-pitch Maths and Science to the player’s age
 
 **Maths (KG → early Class 1)**
 - Tier 1: count objects to 10, more/less, number before/after, add within 10 with pictures.
@@ -76,20 +75,20 @@ Fix existing Logic content: remove ambiguous items, move doubling/square-number 
 - Tier 3: tens and ones to 50 with rods and blocks (keep the existing visuals — they're good); add 2-digit + 1-digit *without* carrying first, carrying last.
 - Distractors: generate from common mistakes (off-by-one, counted the wrong group) and **shuffle positions randomly** each time.
 
-**Science** — keep the 50 Easy questions but make them picture-first and spoken. Move the current 20 Medium questions to a hidden "Big Kid" pack. Discovery missions: keep magnets / ice / shadows at the *Explore* tier only, as animated mini-experiments he can poke.
+**Science** — keep the 50 Easy questions but make them picture-first and spoken. Move the current 20 Medium questions to a hidden "Big Kid" pack. Discovery missions: keep magnets / ice / shadows at the *Explore* tier only, as animated mini-experiments the child can poke.
 
 ---
 
 ## 5. Engagement & reward loop
 
-- **Adventure map instead of 70 numbered boxes**: islands (Pattern Park, Shape Forest, Number River, Maze Mountain…). Each island = one puzzle family. Original mascot (the 🦊 already in the game — give him a name Hridhaan picks).
+- **Adventure map instead of 70 numbered boxes**: islands (Pattern Park, Shape Forest, Number River, Maze Mountain…). Each island = one puzzle family. Original mascot (the 🦊 already in the game — let the child pick its name).
 - **Sticker book**: each completed 5-puzzle game earns a sticker; full pages unlock a new mascot outfit or a new island. Collection beats a raw star count.
 - **Star rules**: ⭐⭐⭐ first try, ⭐⭐ second try, ⭐ after the explanation. Tapping all 4 can't earn more than 1.
-- **"Think first" moment**: options appear ~1.5 s after the question is spoken, so he looks before tapping.
+- **"Think first" moment**: options appear ~1.5 s after the question is spoken, so the child looks before tapping.
 - **Boss puzzle** at the end of each island — a 2-step puzzle (e.g. pattern + count).
 - **Daily "Brain Gym"**: 5 mixed puzzles, one per day, with a calendar streak flame.
 - **Voice & sound**: auto-speak every prompt (Indian-English voice if available, adjustable speed); praise that names the skill ("You spotted the pattern!"); replace the endless 4-note loop with short cues + optional soft background.
-- **Gentle stop**: after ~3 games, mascot says it's tired and suggests showing Mum/Dad what he learned.
+- **Gentle stop**: after ~3 games, mascot says it's tired and suggests showing Mum/Dad what they learned.
 
 ---
 
@@ -115,7 +114,7 @@ Store in `localStorage` per family; show it to parents only.
 
 | Phase | Scope | Effort |
 |-------|-------|--------|
-| **0 — Hygiene (do first)** | Move `tmp/pdfs/` out of the project and add `/tmp/` to `.gitignore`; remove unused scaffold (`chatgpt-auth.ts`, `db/`, drizzle, `examples/`); split `page.tsx` into components. | ½ day |
+| **0 — Hygiene (do first)** | Remove unused scaffold (`chatgpt-auth.ts`, `db/`, drizzle, `examples/`); split `page.tsx` into components. | ½ day |
 | **1 — Playable alone** | Auto read-aloud for every question; default to quiz/adventure view (Discovery behind a button); random answer positions; new star rules; "think first" delay; remove ambiguous/over-age content. | 1–2 days |
 | **2 — Puzzle engine** | A `Puzzle` interface (`generate(tier)`, `render`, `check`, `explain`) + 6 first types: 2-attribute patterns, attribute odd-one-out, analogies, counting in a scene, sequencing story cards (drag), mazes. | 3–4 days |
 | **3 — Adaptive + sessions** | Per-family levels, 5-puzzle games, end-of-game reward screen, Daily Brain Gym. | 2 days |
@@ -123,7 +122,7 @@ Store in `localStorage` per family; show it to parents only.
 | **5 — More puzzle types** | Mirror/rotation, shadows, position words, balance scales, mini-Sudoku, arrow coding, spot the difference. | ongoing, ~½ day each |
 | **6 — Grown-up corner** | Parent gate, skill report, settings. | 1 day |
 
-**Test with Hridhaan after Phase 1 and after Phase 2.** Watch for: where he asks for help, where he taps randomly, what he wants to replay. Adjust tiers from that, not from guesses.
+**Play-test with the child after Phase 1 and after Phase 2.** Watch for: where they ask for help, where they tap randomly, what they want to replay. Adjust tiers from that, not from guesses.
 
 ---
 
@@ -131,8 +130,8 @@ Store in `localStorage` per family; show it to parents only.
 
 - Plays a full 5-puzzle game without an adult reading anything.
 - First-try success settles around 70–80 % per family (adaptive is working).
-- Asks to play again the next day; sticker book is something he shows you.
-- Can explain one answer in his own words ("the colours go red, blue, red…").
+- Asks to play again the next day; sticker book is something they show you.
+- Can explain one answer in their own words ("the colours go red, blue, red…").
 
 ---
 
@@ -140,7 +139,7 @@ Store in `localStorage` per family; show it to parents only.
 
 | Phase | Status |
 |-------|--------|
-| 0 — Hygiene | ✅ `/tmp/` git-ignored; lock file re-synced so `npm ci` works. ⏳ Personal files in `tmp/pdfs/` still to be moved out; unused scaffold (`chatgpt-auth.ts`, `db/`, `examples/`) left in place for now. |
+| 0 — Hygiene | ✅ Lock file re-synced so `npm ci` works; unused hosting scaffold removed; `page.tsx` split into `app/quiz/*` components. |
 | 1 — Playable alone | ✅ Auto read-aloud (Indian-English voice when available), think-first delay, shuffled answers, realistic maths distractors, help after 2 misses, quizzes default, over-age science parked, gentler maths climb. |
 | 2 — Puzzle engine | ✅ `app/puzzles/model.ts` (pure, tested) + `PuzzleAdventure.tsx`. |
 | 3 — Adaptive + sessions | ✅ Levels 1–10 per island, 5-puzzle games, Brain Gym with day streak. |
@@ -148,4 +147,4 @@ Store in `localStorage` per family; show it to parents only.
 | 5 — More puzzle types | ✅ Shadow Cave, Mirror Lake, Hide & Seek Town, Balance Bridge, Sudoku Garden (12 islands total). ⏳ Spot-the-difference not built yet. |
 | 6 — Grown-up corner | ✅ Press-and-hold gate → per-island level, games played, first-try %. |
 
-**Next:** play-test with Hridhaan and tune levels; spot-the-difference; optional settings (voice speed, session length).
+**Next:** play-test and tune levels; spot-the-difference; optional settings (voice speed, session length).

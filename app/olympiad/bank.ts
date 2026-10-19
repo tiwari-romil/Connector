@@ -1,4 +1,4 @@
-// LogIQids Junior KG practice bank — 200 questions in the 25 styles of the sample assessments.
+// Junior reasoning-olympiad practice bank — 200 questions in 25 common question styles.
 // Pure data + pure functions (no React) so the whole bank can be checked by unit tests.
 import { makeRng, shuffle } from "../puzzles/model.ts";
 import { arrow, GREY, INK, line, poly, rect, shape, silhouette, svg, text, type Fill, type ShapeKind } from "./draw.ts";
@@ -47,7 +47,7 @@ export type TypeId = (typeof TYPES)[number]["id"];
 export const LEVELS: Record<Level, { label: string; icon: string }> = {
   easy: { label: "Warm-up", icon: "🟢" },
   medium: { label: "Brain Stretch", icon: "🟠" },
-  champ: { label: "LQ Champ", icon: "🏆" },
+  champ: { label: "Champ", icon: "🏆" },
 };
 
 // ---------- builder ----------
@@ -626,7 +626,7 @@ for (const [lv, tiles, absent, present] of partQs) {
 const TYPE_ORDER = new Map(TYPES.map((t, i) => [t.id as string, i]));
 export const QUESTIONS: Question[] = bank.sort((a, b) => (TYPE_ORDER.get(a.type)! - TYPE_ORDER.get(b.type)!) || a.id.localeCompare(b.id, undefined, { numeric: true }));
 
-/** Eight mock tests of 25: questions are dealt round-robin so every test mixes all types; LQ Champ questions sit at the end, like the real paper. */
+/** Eight mock tests of 25: questions are dealt round-robin so every test mixes all types; Champ questions sit at the end, like the real paper. */
 export const MOCK_TESTS: string[][] = (() => {
   const tests: Question[][] = Array.from({ length: 8 }, () => []);
   QUESTIONS.forEach((q, i) => tests[i % 8].push(q));

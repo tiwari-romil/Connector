@@ -1,4 +1,4 @@
-// Tiny SVG drawing kit for the LogIQids practice bank.
+// Tiny SVG drawing kit for the olympiad practice bank.
 // Every picture is a plain SVG string, so questions stay pure data and can be unit-tested.
 
 export const INK = "#26233a";

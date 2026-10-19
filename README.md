@@ -1,90 +1,102 @@
-# Connector Learning Game
+<p align="center"><img src="public/images/connector-game-logo.png" alt="Connector" width="360"></p>
 
-Connector is a browser-based learning game for young children. It includes maths, science, and logical-reasoning questions, helpful hints, level progress, and keyboard controls.
+# Connector: a learning adventure for ages 4–6
 
-## Requirements
+[![CI](https://github.com/tiwari-romil/Connector/actions/workflows/ci.yml/badge.svg)](https://github.com/tiwari-romil/Connector/actions/workflows/ci.yml)
 
-- [Node.js](https://nodejs.org/) 22.13 or later
-- npm (installed with Node.js)
+Connector is a browser game that teaches early logic, maths and science to children who can't read yet. It reads every question aloud. Difficulty adapts to each child, and after two wrong tries the game explains the answer instead of letting the child guess.
 
-## Run locally
+I built it for a real player, a 5-year-old in Senior KG. The design notes, from the first review to the phased roadmap, are in [`docs/IMPROVEMENT_PLAN.md`](docs/IMPROVEMENT_PLAN.md).
 
-### Easiest Windows start
+## What's inside
 
-Double-click `Start-Game.exe` in the project folder. It starts the game, opens it in your default browser, and prints the Wi-Fi address that a phone on the same network can use. Keep its window open while playing; press `Ctrl+C` there to stop the game.
+| Game | What the child does | Under the hood |
+|------|---------------------|----------------|
+| 🧩 **Puzzle Adventure** | 12 islands of picture puzzles: patterns, odd one out, counting, sums, analogies, ordering, mazes and arrow "coding", shadows, mirror images, position words, balance scales and mini-Sudoku | Every puzzle is **generated** from a seed at one of 10 levels. Unit tests check that each one has exactly one right answer. |
+| 🏆 **Olympiad prep** | 200 questions in 25 common junior-olympiad styles: practice by level or by type, plus eight timed 25-question mock papers with a review at the end | All pictures are SVG built in code (`app/olympiad/draw.ts`), so the question bank is plain data that tests can check |
+| ➕ **Maths quizzes** | 70 levels climbing from picture sums within 5 to two-digit sums with tens and ones; hints show apples or rods and blocks | Wrong options are typical mistakes (off by one, tens mixed up), not random numbers |
+| 🔬 **Science quizzes** | 50 spoken questions about the world around them | Answer order changes on every visit |
+| 🔎 **Discovery missions** | With a grown-up: build numbers with tens and ones, and predict → observe → explain simple experiments (magnets, ice, shadows) | Interactive models plus a free-play "lab" |
 
-The first time you set up the project, run `npm ci` so the game dependencies are available.
+### Design choices for a 5-year-old
 
-Clone the repository and start the development server:
+- **No reading needed.** Every prompt is spoken using the browser's speech engine, with an Indian-English voice when one is available.
+- **Think first.** Answers only become tappable after the question has been read out.
+- **Adaptive difficulty.** Each island has a level from 1 to 10. Three first-try answers in a row move the level up; two misses on one puzzle move it down. About 70 % of puzzles are at the current level, 20 % one easier and 10 % one harder.
+- **Fair rewards.** ⭐⭐⭐ first try, ⭐⭐ second try, ⭐ after help. A level's stars count only once, so replaying a solved level can't inflate the total.
+- **Short sessions.** A game is 5 puzzles followed by a sticker. After three games the fox suggests a break.
+- **Grown-up corner.** Press and hold to see per-skill levels and first-try rates. Holding is easy for an adult but hard for a child to trigger by accident.
+
+## How this was built: AI-assisted engineering
+
+I built Connector with AI coding agents (OpenAI Codex and Anthropic Claude) doing most of the typing. My part was the engineering judgement:
+
+- **Product and learning design.** I defined the player, the age-appropriate skill progression, the reward and break rules, and what "too hard" looks like. I wrote these down as a phased plan ([`docs/IMPROVEMENT_PLAN.md`](docs/IMPROVEMENT_PLAN.md)) before any code was written.
+- **Directing and reviewing.** I broke the work into phases, reviewed every change, and pushed back on generated content that was ambiguous or pitched at the wrong age. For example, some odd-one-out questions had two defensible answers.
+- **Verification.** Generated code had to prove itself. The puzzle generators, question bank, save-file parsing and scoring rules are pure TypeScript with unit tests, and CI runs lint, type checks and tests on every push.
+- **Play-testing.** The roadmap sets levels from watching the real player — where they ask for help, where they tap randomly, what they replay — rather than from guesses.
+
+## Tech stack
+
+- **React 19** with the Next.js App Router, built by vinext (Next.js on Vite) and deployable to **Cloudflare Workers**
+- **TypeScript** in strict mode. The game logic (`app/puzzles/model.ts`, `app/quiz/content.ts`, `app/olympiad/bank.ts`, `app/discovery-model.ts`) has no React or browser dependencies, so tests can run it directly.
+- **Web Speech API** for read-aloud and **Web Audio API** for synthesised sound effects and music (no audio files)
+- **localStorage** for progress, with every save validated on load, so a damaged save resets cleanly instead of crashing the game
+- Tests use Node's built-in `node:test`, plus a server-render smoke test against the production build
+
+## Run it
+
+Requires [Node.js](https://nodejs.org/) 22.13 or later.
 
 ```bash
-git clone https://github.com/romil95/connector.git
-cd connector
+git clone https://github.com/tiwari-romil/Connector.git
+cd Connector
 npm ci
-npm run dev
+npm run dev          # http://localhost:3000
 ```
 
-Open the local URL shown in the terminal (usually `http://localhost:3000`) in a browser.
+To play on a phone or tablet on the same Wi-Fi, run `npm run play:lan`. Then open `http://<this computer's IP>:3100` on the device. On Windows, `scripts/start-lan-game.ps1` finds and prints that address for you.
 
-To stop the server, press `Ctrl+C` in the terminal.
+<details>
+<summary>Optional: a double-click launcher for Windows</summary>
 
-## Production-style local run
+`scripts/StartGame.cs` builds into a small `Start-Game.exe` that starts the game and opens the browser. Build it with the C# compiler that ships with Windows, then keep the .exe in the project folder:
 
-Build the game first, then start the production server:
-
-```bash
-npm ci
-npm run build
-npm run start
+```powershell
+& "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /nologo /out:Start-Game.exe scripts\StartGame.cs
 ```
+</details>
 
-## How to play
-
-### Puzzle Adventure (start here)
-
-The welcome screen opens **🧩 Puzzle Adventure** — picture puzzles in the style of junior logical-reasoning olympiads (like LogIQids), made for ages 4–6. No reading needed: every question is read aloud.
-
-- **Twelve islands**, one per skill: Pattern Park (patterns), Odd One Island, Counting Forest, Number River (adding and missing numbers), Pairs Palace (analogies), Story Steps (putting things in order), Maze Mountain (paths and arrow "coding"), Shadow Cave (match shapes to shadows), Mirror Lake (mirror images and turned pictures), Hide & Seek Town (above, under, left, right, between), Balance Bridge (reading scales, heaviest/lightest, "how many balance?") and Sudoku Garden (3×3 then 4×4 picture Sudoku).
-- **👑 Boss puzzle**: the fifth puzzle of every island game is one level harder.
-- **Name the fox**: tap the fox on the map to pick a name; the game then uses it ("Help Tiku reach the berries!").
-- **Brain Gym**: five mixed puzzles a day, with a 🔥 day streak.
-- A game is **5 puzzles**, then a new sticker for the **sticker book**. After three games the fox suggests a break.
-- **Think first**: answers wake up after the question has been read.
-- **Stars**: ⭐⭐⭐ first try, ⭐⭐ second try, ⭐ after help. Wrong answers are greyed out. After two misses the game explains the answer and makes it glow.
-- **Adaptive levels (1–10 per island)**: three first-try answers in a row → level up; two misses on one puzzle → level down. The 🟡 dots on each island show the level.
-- **For grown-ups**: open the sticker book and **press and hold** *For grown-ups* for 2 seconds to see per-skill levels and first-try rates.
-
-### Level quizzes and Discovery missions
-
-
-### Discovery missions
-
-Maths and Science open on **Level quizzes** (read aloud, answers shuffled, gentle maths climb from sums within 5 up to tens and ones). **Discovery missions** are one tap away and work best with a grown-up. Choose Explore, Stretch, or Challenge; all are available without completing earlier levels.
-
-- **Maths:** build sums with tens and ones, subtract with automatic regrouping, and make equal groups. Check the model, then choose an explanation. Practice changes the numbers.
-- **Science:** predict, run an on-screen model, and explain the evidence. Then change materials, temperature, or a card’s position in the interactive lab.
-- Earn three discovery stars for completing an explanation, even after clues or retries. Repeating a completed challenge does not inflate the star total. Discovery progress stays in this browser, separately from quiz progress.
-- **Read aloud** reads the current activity using browser speech support. **Level quizzes** returns to the original game; Logic remains available.
-- After three different challenges in one visit, the game suggests a break and a conversation about what was learned. Science models are simplified; optional real-world activities should involve an adult.
-
-- Select **Maths**, **Science**, or **Logic** from the top navigation.
-- Choose an answer by clicking it or pressing `1`, `2`, `3`, or `4` (including the numpad).
-- After a correct answer, press `Enter` or choose **Next level**.
-- In Maths, click either number in a sum to view its expanded form, such as `32 = 30 + 2`.
-- In Science, use **Need a clue?** for a simple real-world example.
-- Use the level groups on the side to view progress in blocks of ten levels.
-
-## Useful commands
+## Commands
 
 ```bash
-npm run dev       # Start local development
-npm run build     # Create and validate a production build
-npm run start     # Run the production build locally
-npm test          # Run the project checks
+npm run dev        # development server
+npm run build      # production build
+npm run start      # serve the production build locally
+npm run lint       # ESLint
+npm run typecheck  # TypeScript
+npm test           # build, then run all tests
+npm run deploy     # deploy to Cloudflare Workers (needs `npx wrangler login` first)
 ```
 
 ## Project structure
 
-- `app/page.tsx` — game content and interaction logic
-- `app/globals.css` — responsive game styling
-- `public/images/` — Connector logo assets
+```
+app/
+  page.tsx              home: game switcher, sound, quiz progress
+  WelcomeScreen.tsx     start screen and the player's name
+  puzzles/              Puzzle Adventure: model.ts (generators, adaptive levels, saves) + UI
+  olympiad/             Olympiad prep: bank.ts (200 questions), draw.ts (SVG kit) + UI
+  quiz/                 Maths and Science level quizzes: content.ts (levels, scoring) + UI
+  DiscoveryMissions.tsx Discovery missions UI (logic in discovery-model.ts)
+  speech.ts, audio.ts   read-aloud and sound helpers
+tests/                  unit tests for every model + a server-render smoke test
+worker/index.ts         Cloudflare Worker entry
+scripts/                local-network launcher
+```
+
+## Controls
+
+- Tap or click an answer. On a keyboard, press `1`–`4` (or `A`–`D` in Olympiad prep), then `Enter` for the next question.
+- 🔊 in the top bar turns all sound and speech on or off. **Hear it again** repeats the question.
+- Progress is saved in the browser on that device.

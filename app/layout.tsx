@@ -10,15 +10,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const title = "Learning Adventure — Build, Test & Discover";
-  const description = "Explore hands-on Maths and Science missions, build explanations, and choose a new challenge. Includes the original 70-level Maths, Science and Logic quizzes.";
+  const title = "Connector — Learning Adventure for Kids";
+  const description = "A voice-guided learning game for ages 4–6: adaptive picture puzzles, maths with rods and blocks, science quizzes and olympiad-style practice papers.";
 
   return {
     metadataBase: base,
     title,
     description,
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-    openGraph: { title, description, type: "website", images: [{ url: "/og.png", width: 1736, height: 907, alt: "Math Adventure addition game" }] },
+    openGraph: { title, description, type: "website", images: [{ url: "/og.png", width: 1736, height: 907, alt: "Connector learning game" }] },
     twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
   };
 }

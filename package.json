@@ -1,5 +1,5 @@
 {
-  "name": "site-creator-vinext-starter",
+  "name": "connector",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -7,14 +7,15 @@
   },
   "scripts": {
     "dev": "vinext dev",
+    "play:lan": "node scripts/lan-server.mjs 3100",
     "build": "vinext build",
     "start": "vinext start",
-    "test": "npm run build && node --experimental-strip-types --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --experimental-strip-types --test tests/*.test.mjs",
+    "deploy": "vinext deploy"
   },
   "dependencies": {
-    "drizzle-orm": "0.45.2",
     "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6"
@@ -27,7 +28,6 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
-    "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "react-server-dom-webpack": "19.2.6",
@@ -37,5 +37,6 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "description": "Voice-guided learning game for 4–6 year olds: adaptive logic puzzles, maths and science."
 }

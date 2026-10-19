@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { QUESTIONS, TYPES, MOCK_TESTS, HIDDEN_LETTER_CHECK, optionLabel } from "../app/logiquids/bank.ts";
+import { QUESTIONS, TYPES, MOCK_TESTS, HIDDEN_LETTER_CHECK, optionLabel } from "../app/olympiad/bank.ts";
 
 test("bank has 200 questions across all 25 sample types and three levels", () => {
   assert.equal(QUESTIONS.length, 200);

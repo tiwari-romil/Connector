@@ -1,4 +1,4 @@
-// Puzzle Adventure — LogIQids-style picture puzzles for ages 4–6.
+// Puzzle Adventure — picture puzzles in the style of junior reasoning olympiads, for ages 4–6.
 // Everything in this file is pure (no React, no browser APIs) so it can be unit-tested.
 
 export type Family = "patterns" | "odd" | "analogy" | "count" | "order" | "maze" | "sums" | "shadow" | "mirror" | "position" | "balance" | "sudoku";

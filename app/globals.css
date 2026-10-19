@@ -534,7 +534,7 @@ button { font: inherit; }
 .pz-hold .pz-hold-fill { z-index: -1; }
 @media (max-width: 720px) { .pz-scale { width: 220px; height: 136px; font-size: 36px; }.pz-pan { width: 92px; } }
 
-/* ---------- LogIQids Prep ---------- */
+/* ---------- Olympiad prep ---------- */
 .lq-shell { --lq-ink: #2b2550; --lq-purple: #6c4cf5; --lq-orange: #ef8a1f; --lq-green: #1f9d62; --lq-red: #d9534f; max-width: 980px; margin: 22px auto 40px; padding: 0 4px; position: relative; z-index: 2; color: var(--lq-ink); text-align: left; }
 .lq-shell button { font: inherit; cursor: pointer; color: inherit; }
 .lq-shell button:focus-visible { outline: 3px solid #155fc9; outline-offset: 3px; }
@@ -673,3 +673,10 @@ button { font: inherit; }
   .lq-btn { font-size: 16px; padding: 11px 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .lq-hero-fox, .lq-option.reveal, .lq-option.wrong, .lq-burst span { animation: none; } }
+
+/* ---------- player name (welcome screen) ---------- */
+.welcome-card .name-edit { border: 0; background: none; color: #7a7290; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; text-decoration: underline dotted; margin: -4px 0 6px; }
+.welcome-card .name-form { display: flex; gap: 8px; justify-content: center; align-items: end; flex-wrap: wrap; margin: 0 0 8px; }
+.welcome-card .name-form label { display: grid; gap: 4px; text-align: left; font-size: 13px; font-weight: 800; color: #7a7290; }
+.welcome-card .name-form input { font: inherit; font-size: 16px; padding: 8px 12px; border-radius: 12px; border: 2px solid #d9d2f3; width: 180px; }
+.welcome-card .name-form button { border: 0; border-radius: 12px; padding: 10px 16px; font: inherit; font-weight: 900; color: white; background: #7351f1; cursor: pointer; }

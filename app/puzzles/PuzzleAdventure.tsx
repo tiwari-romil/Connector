@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { playTone } from "../audio";
 import { speak, stopSpeaking } from "../speech";
 import {
   FAMILIES, FOX_NAMES, GAME_LENGTH, MAX_LEVEL, STICKERS, cleanName, emptySave, finishGame, generatePuzzle, levelFor, makeRng, planGame,
@@ -43,14 +44,13 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
   const [sticker, setSticker] = useState<string | null>(null);
   const [gamesThisVisit, setGamesThisVisit] = useState(0);
   const [naming, setNaming] = useState(false);
-  const audioRef = useRef<AudioContext | null>(null);
   const readyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // Read browser progress after hydration so server and client first render match.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     try { setSave(readPuzzleSave(localStorage.getItem(SAVE_KEY))); } catch { /* storage blocked */ }
-    return () => { stopSpeaking(); if (readyTimer.current) clearTimeout(readyTimer.current); audioRef.current?.close(); };
+    return () => { stopSpeaking(); if (readyTimer.current) clearTimeout(readyTimer.current); };
   }, []);
 
   function persist(next: PuzzleSave) {
@@ -59,17 +59,7 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
   }
 
   function tone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08, delay = 0) {
-    if (!soundOn) return;
-    try {
-      if (!audioRef.current) audioRef.current = new AudioContext();
-      const ctx = audioRef.current;
-      if (ctx.state === "suspended") ctx.resume();
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.type = type; osc.frequency.value = frequency;
-      gain.gain.setValueAtTime(volume, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
-      osc.connect(gain).connect(ctx.destination); osc.start(ctx.currentTime + delay); osc.stop(ctx.currentTime + delay + duration);
-    } catch { /* audio unavailable */ }
+    if (soundOn) playTone(frequency, duration, type, volume, delay);
   }
   const say = (text: string, onEnd?: () => void) => { if (soundOn) speak(text, { onEnd }); else onEnd?.(); };
 
@@ -85,7 +75,8 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
     // "Think first": answers wake up after the question is read (or 1.5 s when sound is off).
     if (readyTimer.current) clearTimeout(readyTimer.current);
     readyTimer.current = setTimeout(() => setReady(true), soundOn ? 4500 : 1500);
-    say(`${boss ? "Boss puzzle! " : ""}${next.prompt}`, () => { if (readyTimer.current) clearTimeout(readyTimer.current); readyTimer.current = setTimeout(() => setReady(true), 250); });
+    // Only speech ends the wait early; with sound off the full 1.5 s pause applies.
+    if (soundOn) speak(`${boss ? "Boss puzzle! " : ""}${next.prompt}`, { onEnd: () => { if (readyTimer.current) clearTimeout(readyTimer.current); readyTimer.current = setTimeout(() => setReady(true), 250); } });
     return boss;
   }
 

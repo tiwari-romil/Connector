@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$projectPath = "C:\Users\ADMIN\OneDrive\Learn\connector"
+$projectPath = Split-Path -Parent $PSScriptRoot
 $lanPort = 3100
 
 if (-not (Test-Path -LiteralPath $projectPath)) {
@@ -18,7 +18,7 @@ $lanAddress = Get-NetIPAddress -AddressFamily IPv4 |
 Set-Location -LiteralPath $projectPath
 
 Write-Host ""
-Write-Host "Hridhaan's Maths & Science Adventure is starting..." -ForegroundColor Cyan
+Write-Host "Connector learning game is starting..." -ForegroundColor Cyan
 if ($lanAddress) {
     Write-Host "Open this on a phone connected to the same Wi-Fi:" -ForegroundColor Yellow
     Write-Host "http://$lanAddress`:$lanPort" -ForegroundColor Green

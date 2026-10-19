@@ -46,7 +46,7 @@ internal static class StartGame
             return 1;
         }
 
-        Console.WriteLine("Starting Hridhaan's Maths & Science Adventure...");
+        Console.WriteLine("Starting the Connector learning game...");
         Console.WriteLine("Game address: http://localhost:" + Port);
         Console.WriteLine("Other devices on this Wi-Fi can use: http://" + GetLanAddress() + ":" + Port);
 

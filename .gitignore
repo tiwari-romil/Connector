@@ -17,6 +17,7 @@
 /.next/
 /.vinext/
 /out/
+*.tsbuildinfo
 
 # misc
 .DS_Store
@@ -43,3 +44,7 @@ next-env.d.ts
 
 # scratch files (never commit personal documents)
 /tmp/
+
+# local-only files (kept on this machine, never published)
+/Start-Game.exe
+/logiquids sample/

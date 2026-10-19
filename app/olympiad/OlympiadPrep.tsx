@@ -8,14 +8,15 @@ import { LEVELS, MOCK_TESTS, QUESTIONS, TYPES, optionLabel, type Level, type Opt
 type Mode = "practice" | "test";
 type Session = { title: string; ids: string[]; mode: Mode; mock?: number };
 type Save = { best: Record<string, number>; solved: string[]; mistakes: string[]; stars: number };
-const KEY = "logiquids-prep-v1";
+const KEY = "olympiad-prep-v1";
+const OLD_KEY = "logiquids-prep-v1"; // earlier name; read once so existing progress carries over
 const EMPTY: Save = { best: {}, solved: [], mistakes: [], stars: 0 };
 const BY_ID = new Map(QUESTIONS.map((q) => [q.id, q]));
 const LETTERS = ["A", "B", "C", "D"];
 const PRAISE = ["Super!", "Brilliant!", "You got it!", "Champion thinking!", "Wow, well spotted!", "Fantastic!"];
 
 function loadSave(): Save {
-  try { const raw = localStorage.getItem(KEY); if (!raw) return EMPTY; const d = JSON.parse(raw); return { best: d.best ?? {}, solved: Array.isArray(d.solved) ? d.solved : [], mistakes: Array.isArray(d.mistakes) ? d.mistakes : [], stars: Number(d.stars) || 0 }; } catch { return EMPTY; }
+  try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY); if (!raw) return EMPTY; const d = JSON.parse(raw); return { best: d.best ?? {}, solved: Array.isArray(d.solved) ? d.solved : [], mistakes: Array.isArray(d.mistakes) ? d.mistakes : [], stars: Number(d.stars) || 0 }; } catch { return EMPTY; }
 }
 function storeSave(s: Save) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* private mode: progress just isn't kept */ } }
 
@@ -24,7 +25,7 @@ function readText(q: Question) {
   return q.prompt.replace(/"\?"/g, "the question mark") + lines + (q.note ? ". " + q.note : "");
 }
 
-export default function LogiquidsPrep({ soundOn }: { soundOn: boolean }) {
+export default function OlympiadPrep({ soundOn }: { soundOn: boolean }) {
   const [save, setSave] = useState<Save>(EMPTY);
   const [session, setSession] = useState<Session | null>(null);
   const [index, setIndex] = useState(0);
@@ -130,8 +131,8 @@ function PrepHome({ save, onMock, onLevel, onType, onMistakes }: { save: Save; o
       <div className="lq-hero-fox" aria-hidden="true">🦊</div>
       <div>
         <p className="lq-eyebrow">Exam practice · Junior KG</p>
-        <h1>LogIQids Prep</h1>
-        <p>{QUESTIONS.length} puzzles just like the real test, from easy warm-ups to tricky <b>LQ Champ</b> ones.</p>
+        <h1>Reasoning Olympiad Prep</h1>
+        <p>{QUESTIONS.length} puzzles in the style of junior olympiad papers, from easy warm-ups to tricky <b>Champ</b> ones.</p>
       </div>
       <div className="lq-hero-stats">
         <span><b>{solvedSet.size}</b> / {QUESTIONS.length} solved</span>
@@ -140,7 +141,7 @@ function PrepHome({ save, onMock, onLevel, onType, onMistakes }: { save: Save; o
       </div>
     </header>
 
-    <h2 className="lq-h2">📝 Mock tests <small>25 questions each, like the real paper — answers shown at the end</small></h2>
+    <h2 className="lq-h2">📝 Mock tests <small>25 questions each, a full practice paper — answers shown at the end</small></h2>
     <div className="lq-mocks">
       {MOCK_TESTS.map((_, i) => <button key={i} className="lq-mock" onClick={() => onMock(i)}>
         <strong>Test {i + 1}</strong>
@@ -159,13 +160,13 @@ function PrepHome({ save, onMock, onLevel, onType, onMistakes }: { save: Save; o
     </div>
     {save.mistakes.length > 0 && <button className="lq-mistakes" onClick={onMistakes}>🔁 Retry my tricky ones <b>{save.mistakes.length}</b></button>}
 
-    <h2 className="lq-h2">🧩 Practise one kind of question <small>all {TYPES.length} kinds from the sample papers</small></h2>
+    <h2 className="lq-h2">🧩 Practise one kind of question <small>all {TYPES.length} kinds of question</small></h2>
     <div className="lq-types">
       {TYPES.map((t) => { const qs = QUESTIONS.filter((q) => q.type === t.id); const done = qs.filter((q) => solvedSet.has(q.id)).length; return <button key={t.id} className={`lq-type ${done === qs.length ? "done" : ""}`} onClick={() => onType(t.id)}>
         <span className="lq-type-icon">{t.icon}</span><span className="lq-type-name">{t.title}</span><small>{done}/{qs.length}</small>
       </button>; })}
     </div>
-    <p className="lq-tip">💡 Exam tip for grown-ups: read each question aloud, let him point before he circles, and remind him to check <b>every</b> option — the tricky ones often look almost right.</p>
+    <p className="lq-tip">💡 Exam tip for grown-ups: read each question aloud, let your child point before circling, and remind them to check <b>every</b> option — the tricky ones often look almost right.</p>
   </section>;
 }
 
