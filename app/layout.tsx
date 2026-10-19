@@ -10,8 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const title = "Learning Adventure — 70 Fun Levels";
-  const description = "A colourful Maths, Science, and Logic game for young learners, with 50 easy levels and 20 medium levels in every subject.";
+  const title = "Learning Adventure — Build, Test & Discover";
+  const description = "Explore hands-on Maths and Science missions, build explanations, and choose a new challenge. Includes the original 70-level Maths, Science and Logic quizzes.";
 
   return {
     metadataBase: base,
