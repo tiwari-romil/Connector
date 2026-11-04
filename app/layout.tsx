@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
+import { siteOrigin } from "./site";
 
 const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const headerList = await headers();
-  const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
-  const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  const base = new URL(`${protocol}://${host}`);
+  // Never X-Forwarded-Host/-Proto: the client sets those, so they could point the links elsewhere.
+  const base = siteOrigin((await headers()).get("host"));
   const title = "Connector — Learning Adventure for Kids";
   const description = "A voice-guided learning game for ages 4–6: adaptive picture puzzles, maths with rods and blocks, science quizzes and olympiad-style practice papers.";
 

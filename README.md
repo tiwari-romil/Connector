@@ -60,6 +60,7 @@ npm run dev          # http://localhost:3000
 ```
 
 To play on a phone or tablet on the same Wi-Fi, run `npm run play:lan`. Then open `http://<this computer's IP>:3100` on the device. On Windows, `scripts/start-lan-game.ps1` finds and prints that address for you.
+It answers only devices on your home network (private addresses), because it serves the development server without a login. Use it on a trusted Wi-Fi, not a public one.
 
 <details>
 <summary>Optional: a double-click launcher for Windows</summary>

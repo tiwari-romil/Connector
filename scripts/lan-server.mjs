@@ -11,7 +11,21 @@ const game = spawn(npxCommand, ["vinext", "dev", "--port", String(internalPort)]
   shell: process.platform === "win32",
 });
 
+// This proxies a development server with no login, so only answer devices on the home network
+// (and this computer). If the port is ever forwarded or the machine has a public address,
+// outside requests are refused instead of reaching the dev server.
+const PRIVATE_CLIENT = /^(?:127\.|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|169\.254\.)/;
+function isLocalClient(address = "") {
+  const ip = address.replace(/^::ffff:/i, "");
+  return PRIVATE_CLIENT.test(ip) || ip === "::1";
+}
+
 const server = http.createServer((request, response) => {
+  if (!isLocalClient(request.socket.remoteAddress)) {
+    response.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+    response.end("This game only plays on the home network.");
+    return;
+  }
   const upstream = http.request({
     hostname: "::1",
     port: internalPort,
@@ -47,4 +61,5 @@ game.on("exit", (code) => {
 
 server.listen(lanPort, "0.0.0.0", () => {
   console.log(`LAN bridge ready on http://0.0.0.0:${lanPort}`);
+  console.log("Only devices on this home network can connect. Use it on a trusted Wi-Fi, not a public one.");
 });
