@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CHALLENGES, MISSIONS, experimentFor, mathMission, readDiscoverySave } from "./discovery-model";
 import type { Challenge, DiscoverySave, MissionId, MissionSubject } from "./discovery-model";
+import { SPEECH_VOLUME } from "./speech";
 
 type Props = { subject: MissionSubject; onQuiz: () => void; soundOn: boolean };
 
@@ -46,6 +47,7 @@ export default function DiscoveryMissions({ subject, onQuiz, soundOn }: Props) {
     window.speechSynthesis.cancel();
     const speech = new SpeechSynthesisUtterance(activity?.innerText ?? active.title);
     speech.rate = 0.85;
+    speech.volume = SPEECH_VOLUME;
     window.speechSynthesis.speak(speech);
   }
   useEffect(() => () => { window.speechSynthesis?.cancel(); }, []);

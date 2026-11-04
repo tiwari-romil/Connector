@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { playCorrect, playFanfare, playWrong } from "../audio";
 import { speak, stopSpeaking } from "../speech";
 import { makeRng, shuffle } from "../puzzles/model";
 import { LEVELS, MOCK_TESTS, QUESTIONS, TYPES, optionLabel, type Level, type Opt, type Question, type Visual } from "./bank";
@@ -80,7 +81,11 @@ export default function OlympiadPrep({ soundOn }: { soundOn: boolean }) {
       };
     });
     setFinished(true); stopSpeaking();
-    if (soundOn) speak(correct.length / session.ids.length >= 0.8 ? "Amazing work! You are ready for the exam." : "Good try! Let's look at the tricky ones together.");
+    if (soundOn) {
+      const ready = correct.length / session.ids.length >= 0.8;
+      if (ready) playFanfare();
+      speak(ready ? "Amazing work! You are ready for the exam." : "Good try! Let's look at the tricky ones together.", { exclaim: ready ? "cheer" : undefined });
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -104,11 +109,12 @@ export default function OlympiadPrep({ soundOn }: { soundOn: boolean }) {
       const earned = nextPicks.length === 1 ? 3 : 2;
       update((s) => ({ ...s, stars: s.stars + earned, solved: [...new Set([...s.solved, q.id])], mistakes: nextPicks.length === 1 ? s.mistakes.filter((m) => m !== q.id) : s.mistakes }));
       setStreak((n) => n + 1); setBurst((b) => b + 1);
-      if (soundOn) speak(PRAISE[(index + nextPicks.length) % PRAISE.length], { pitch: 1.35 });
+      if (soundOn) { playCorrect(); speak(PRAISE[(index + nextPicks.length) % PRAISE.length], { pitch: 1.35, exclaim: "cheer" }); }
     } else {
       setStreak(0);
-      if (nextPicks.length >= 2) { update((s) => ({ ...s, mistakes: [...new Set([...s.mistakes, q.id])] })); if (soundOn) speak("Let's see why. " + q.why); }
-      else if (soundOn) speak("Nearly! Look again carefully.");
+      if (soundOn) playWrong();
+      if (nextPicks.length >= 2) { update((s) => ({ ...s, mistakes: [...new Set([...s.mistakes, q.id])] })); if (soundOn) speak("Let's see why. " + q.why, { exclaim: "oops" }); }
+      else if (soundOn) speak("Nearly! Look again carefully.", { exclaim: "oops" });
     }
   }
   function go(delta: number) {

@@ -146,5 +146,6 @@ Store in `localStorage` per family; show it to parents only.
 | 4 — World & rewards | ✅ Island map, 30-sticker book, name-the-fox, 👑 boss puzzles, softer music. |
 | 5 — More puzzle types | ✅ Shadow Cave, Mirror Lake, Hide & Seek Town, Balance Bridge, Sudoku Garden (12 islands total). ⏳ Spot-the-difference not built yet. |
 | 6 — Grown-up corner | ✅ Press-and-hold gate → per-island level, games played, first-try %. |
+| 7 — Memory & carrying (2 Nov 2026) | ✅ Memory games (Echo the Band, Hold the Numbers) and Carry Club (column addition with carrying, 2-digit to 3-digit), each adaptive with a rank ladder that never drops. |
 
-**Next:** play-test and tune levels; spot-the-difference; optional settings (voice speed, session length).
+**Next:** play-test and tune levels; spot-the-difference; optional settings (voice speed, session length); bring back missed questions a few days later (spaced review); one sticker book and grown-up report across every game; install on a tablet to play offline; progress backup code.

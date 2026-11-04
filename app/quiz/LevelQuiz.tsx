@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { playCheer, playTone } from "../audio";
+import { playCheer, playWrong } from "../audio";
 import { starsFor } from "../puzzles/model";
 import { speak } from "../speech";
 import LevelMap from "./LevelMap";
@@ -59,16 +59,16 @@ export default function LevelQuiz({ subject, progress, onProgress, onAnswer, sou
       setStatus("correct");
       onProgress((previous) => recordWin(previous, index, starsFor(wrongTries), levelCount));
       onAnswer(true);
-      if (soundOn) { playCheer(); speak(praise, { pitch: 1.35 }); }
+      if (soundOn) { playCheer(); speak(praise, { pitch: 1.35, exclaim: "cheer" }); }
       return;
     }
     setStatus("wrong"); setWrongPicks([...wrongPicks, choice]); onAnswer(false);
-    if (soundOn) playTone(180, 0.18, "sawtooth", 0.045);
+    if (soundOn) playWrong();
     if (wrongTries + 1 >= 2) {
       // After two misses, teach instead of letting the child keep guessing.
       if (math) setShowHint(true);
-      if (soundOn) speak(math ? (smallSum ? "Let's count the apples together." : "Let's count together. Put the rods together, then the blocks together.") : `Let's think together. The answer is glowing. ${questionText}`);
-    } else if (soundOn) speak("Nearly! Try another one.");
+      if (soundOn) speak(math ? (smallSum ? "Let's count the apples together." : "Let's count together. Put the rods together, then the blocks together.") : `Let's think together. The answer is glowing. ${questionText}`, { exclaim: "oops" });
+    } else if (soundOn) speak("Nearly! Try another one.", { exclaim: "oops" });
   }
 
   function resetPuzzle() { setSelected(null); setWrongPicks([]); setStatus("playing"); setShowHint(false); setReady(false); setVisit((v) => v + 1); }

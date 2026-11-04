@@ -48,3 +48,6 @@ next-env.d.ts
 # local-only files (kept on this machine, never published)
 /Start-Game.exe
 /logiquids sample/
+
+# brainstorming mockups (local only)
+/.superpowers/

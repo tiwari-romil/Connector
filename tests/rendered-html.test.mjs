@@ -8,5 +8,5 @@ test("production game opens on the welcome screen with every game on offer", asy
   }, { waitUntil() {}, passThroughOnException() {} });
   assert.equal(response.status, 200);
   const html = await response.text();
-  for (const label of ["Olympiad exam prep", "Puzzle Adventure", "Maths", "Science", "Hi friend!", "add a name"]) assert.ok(html.includes(label), label);
+  for (const label of ["Olympiad exam prep", "Puzzle Adventure", "Memory games", "Maths", "Science", "Hi friend!", "add a name"]) assert.ok(html.includes(label), label);
 });
