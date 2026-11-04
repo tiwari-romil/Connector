@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { playTone } from "../audio";
-import { speak, stopSpeaking } from "../speech";
+import { playCheer, playFanfare, playStart, playStep, playWrong } from "../audio";
+import HoldToOpen from "../HoldToOpen";
+import { speak, stopSpeaking, type Exclaim } from "../speech";
 import {
   FAMILIES, FOX_NAMES, GAME_LENGTH, MAX_LEVEL, STICKERS, cleanName, emptySave, finishGame, generatePuzzle, levelFor, makeRng, planGame,
   readPuzzleSave, recordResult, solveMaze, starsFor, walk,
@@ -58,10 +59,9 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(next)); } catch { /* storage blocked */ }
   }
 
-  function tone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08, delay = 0) {
-    if (soundOn) playTone(frequency, duration, type, volume, delay);
-  }
-  const say = (text: string, onEnd?: () => void) => { if (soundOn) speak(text, { onEnd }); else onEnd?.(); };
+  /** Plays a sound effect only while sound is switched on. */
+  const sfx = (play: () => void) => { if (soundOn) play(); };
+  const say = (text: string, onEnd?: () => void, exclaim?: Exclaim) => { if (soundOn) speak(text, { onEnd, exclaim }); else onEnd?.(); };
 
   function loadPuzzle(families: Family[], index: number, from: PuzzleSave, island: boolean): boolean {
     const family = families[index];
@@ -83,7 +83,7 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
   function startGame(choice: Family | "gym") {
     const families = planGame(choice, makeRng(Math.floor(Math.random() * 2 ** 31)));
     setScreen("play");
-    tone(392, 0.15); tone(523.3, 0.25, "sine", 0.08, 0.12);
+    sfx(playStart);
     const boss = loadPuzzle(families, 0, save, choice !== "gym");
     setGame({ choice, families, index: 0, stars: [], boss });
   }
@@ -92,9 +92,9 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
     if (solved || !puzzle) return;
     const count = misses + 1;
     setMisses(count);
-    tone(190, 0.18, "triangle", 0.06);
-    if (count >= 2) { setMessage(puzzle.explain); say(`Let's look together. ${puzzle.explain}`); }
-    else { setMessage("Nearly! Look again."); say("Nearly! Look again."); }
+    sfx(playWrong);
+    if (count >= 2) { setMessage(puzzle.explain); say(`Let's look together. ${puzzle.explain}`, undefined, "oops"); }
+    else { setMessage("Nearly! Look again."); say("Nearly! Look again.", undefined, "oops"); }
   }
 
   function solve() {
@@ -102,8 +102,8 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
     setSolved(true);
     const praise = (game.boss ? "You beat the boss puzzle! " : "") + PRAISE[puzzle.family][Math.floor(Math.random() * 3)].replace("The fox", save.foxName || "The fox");
     setMessage(praise);
-    tone(523.3, 0.18, "sine", 0.1); tone(659.3, 0.18, "sine", 0.1, 0.12); tone(784, 0.32, "sine", 0.1, 0.24);
-    say(praise);
+    sfx(playCheer);
+    say(praise, undefined, "cheer");
     persist(recordResult(save, puzzle.family, misses));
     setGame({ ...game, stars: [...game.stars, starsFor(misses)] });
   }
@@ -122,8 +122,8 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
     setGamesThisVisit((n) => n + 1);
     setScreen("reward");
     stopSpeaking();
-    tone(523.3, 0.2); tone(659.3, 0.2, "sine", 0.08, 0.15); tone(784, 0.2, "sine", 0.08, 0.3); tone(1046.5, 0.4, "sine", 0.08, 0.45);
-    say(result.sticker ? "You finished! Here is a new sticker for your book!" : "You finished! Your sticker book is full — amazing!");
+    sfx(playFanfare);
+    say(result.sticker ? "You finished! Here is a new sticker for your book!" : "You finished! Your sticker book is full — amazing!", undefined, "cheer");
   }
 
   function toMap() { stopSpeaking(); setScreen("map"); setGame(null); setPuzzle(null); }
@@ -161,7 +161,7 @@ export default function PuzzleAdventure({ soundOn }: { soundOn: boolean }) {
         <h2 className="pz-prompt">{puzzle.prompt}</h2>
         {puzzle.interaction === "choice" && <ChoiceView puzzle={puzzle} ready={ready} help={misses >= 2} solved={solved} onMiss={miss} onSolve={solve} />}
         {puzzle.interaction === "order" && <OrderView puzzle={puzzle} ready={ready} help={misses >= 2} onMiss={miss} onSolve={solve} />}
-        {puzzle.interaction === "maze" && <MazeView puzzle={puzzle} ready={ready} help={misses >= 2} onMiss={miss} onSolve={solve} onStep={() => tone(660, 0.06, "sine", 0.04)} />}
+        {puzzle.interaction === "maze" && <MazeView puzzle={puzzle} ready={ready} help={misses >= 2} onMiss={miss} onSolve={solve} onStep={() => sfx(playStep)} />}
         <div className={`pz-feedback ${solved ? "good" : misses >= 2 ? "help" : misses ? "try" : ""}`} role="status">
           {solved ? <><span className="pz-bounce">🎉</span><strong>{message}</strong><span className="pz-earned">{"⭐".repeat(starsFor(misses))}</span><button className="pz-big" onClick={next} autoFocus>{game.index + 1 < GAME_LENGTH ? "Next ➜" : "Finish 🏁"}</button></>
             : message ? <><span>{misses >= 2 ? "💡" : "💪"}</span><span>{message}</span></>
@@ -418,19 +418,6 @@ function FoxNamer({ current, onDone }: { current: string; onDone: (name: string)
       <button className="pz-big pz-secondary" onClick={() => onDone("")}>Close</button>
     </div>
   </div>;
-}
-
-/** Press and hold for 2 seconds — easy for grown-ups, not something a 5-year-old taps by accident. */
-function HoldToOpen({ onOpen }: { onOpen: () => void }) {
-  const [holding, setHolding] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const start = () => { setHolding(true); timer.current = setTimeout(() => { setHolding(false); onOpen(); }, 2000); };
-  const stop = () => { setHolding(false); if (timer.current) clearTimeout(timer.current); };
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-  return <button className={`pz-hold ${holding ? "holding" : ""}`} onPointerDown={start} onPointerUp={stop} onPointerLeave={stop} onContextMenu={(e) => e.preventDefault()}
-    onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !e.repeat) start(); }} onKeyUp={stop}>
-    <span className="pz-hold-fill" />🔒 For grown-ups — press and hold
-  </button>;
 }
 
 // ---------- sticker book + grown-up notes ----------

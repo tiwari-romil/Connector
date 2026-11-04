@@ -8,11 +8,12 @@ type Props = {
   onName: (name: string) => void;
   onPrep: () => void;
   onPuzzles: () => void;
+  onMemory: () => void;
   onMath: () => void;
   onScience: () => void;
 };
 
-export default function WelcomeScreen({ playerName, onName, onPrep, onPuzzles, onMath, onScience }: Props) {
+export default function WelcomeScreen({ playerName, onName, onPrep, onPuzzles, onMemory, onMath, onScience }: Props) {
   const [editing, setEditing] = useState(false);
   const [typed, setTyped] = useState(playerName);
   const greeting = `${playerName || "friend"}!`;
@@ -33,6 +34,7 @@ export default function WelcomeScreen({ playerName, onName, onPrep, onPuzzles, o
       <p>Solve puzzles, earn stars and collect stickers!</p>
       <button className="puzzle-start prep-start" onClick={onPrep}>🏆 Olympiad exam prep <span>→</span></button>
       <button className="puzzle-start" onClick={onPuzzles}>🧩 Puzzle Adventure <span>→</span></button>
+      <button className="puzzle-start memory-start" onClick={onMemory}>🧠 Memory games <span>→</span></button>
       <div className="welcome-choices">
         <button onClick={onMath}>➕ Maths <span>→</span></button>
         <button className="science-start" onClick={onScience}>🔬 Science <span>→</span></button>

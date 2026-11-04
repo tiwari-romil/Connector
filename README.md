@@ -15,15 +15,19 @@ I built it for a real player, a 5-year-old in Senior KG. The design notes, from 
 | 🧩 **Puzzle Adventure** | 12 islands of picture puzzles: patterns, odd one out, counting, sums, analogies, ordering, mazes and arrow "coding", shadows, mirror images, position words, balance scales and mini-Sudoku | Every puzzle is **generated** from a seed at one of 10 levels. Unit tests check that each one has exactly one right answer. |
 | 🏆 **Olympiad prep** | 200 questions in 25 common junior-olympiad styles: practice by level or by type, plus eight timed 25-question mock papers with a review at the end | All pictures are SVG built in code (`app/olympiad/draw.ts`), so the question bank is plain data that tests can check |
 | ➕ **Maths quizzes** | 70 levels climbing from picture sums within 5 to two-digit sums with tens and ones; hints show apples or rods and blocks | Wrong options are typical mistakes (off by one, tens mixed up), not random numbers |
+| 🦸 **Carry Club** | Column addition from 27 + 5 up to 678 + 456. The child adds one column at a time and taps the carried 1 up to the next column themselves | Each of the 10 levels adds one new idea (carry from the ones, from the tens, into thousands, two carries…); tests check every generated sum matches its level |
+| 🧠 **Memory games** | **Echo the Band**: animals play a tune that the child plays back. **Hold the Numbers**: remember digits and tap them back, later backwards | Tunes use a pentatonic scale synthesised in code; levels lengthen the tune, add animals, quicken the beat, and move from forwards to backwards recall |
 | 🔬 **Science quizzes** | 50 spoken questions about the world around them | Answer order changes on every visit |
 | 🔎 **Discovery missions** | With a grown-up: build numbers with tens and ones, and predict → observe → explain simple experiments (magnets, ice, shadows) | Interactive models plus a free-play "lab" |
 
 ### Design choices for a 5-year-old
 
-- **No reading needed.** Every prompt is spoken using the browser's speech engine, with an Indian-English voice when one is available.
+- **No reading needed.** Every prompt is spoken using the browser's speech engine, choosing the most natural-sounding English voice on the device (Indian English preferred). Right answers get a cheer ("Woohoo!", "Awesome!") and slips a gentle "Oops!".
+- **Soft, warm sound.** Music-box style effects for taps, right and wrong answers, progress and level-ups, plus a gentle background tune — all synthesised in code.
 - **Think first.** Answers only become tappable after the question has been read out.
 - **Adaptive difficulty.** Each island has a level from 1 to 10. Three first-try answers in a row move the level up; two misses on one puzzle move it down. About 70 % of puzzles are at the current level, 20 % one easier and 10 % one harder.
 - **Fair rewards.** ⭐⭐⭐ first try, ⭐⭐ second try, ⭐ after help. A level's stars count only once, so replaying a solved level can't inflate the total.
+- **Ranks that never drop.** The memory games and Carry Club each have a rank ladder (Little Listener → Drummer → … → Maestro). Ranks come from the highest level reached, so a hard day never takes one away.
 - **Short sessions.** A game is 5 puzzles followed by a sticker. After three games the fox suggests a break.
 - **Grown-up corner.** Press and hold to see per-skill levels and first-try rates. Holding is easy for an adult but hard for a child to trigger by accident.
 
